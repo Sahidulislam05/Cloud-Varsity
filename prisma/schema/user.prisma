@@ -1,0 +1,43 @@
+model User {
+  id        String    @id @default(cuid())
+  name      String
+  email     String    @unique
+  password  String?
+  role      Role
+  gender    Gender?
+  phone     String?
+  avatar    String?
+  isActive  Boolean   @default(true)
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  studentProfile    StudentProfile?
+  instructorProfile InstructorProfile?
+  notifications     Notification[]
+  auditLogs         AuditLog[]
+
+  @@index([role])
+  @@map("users")
+}
+
+model StudentProfile {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  studentId String   @unique
+  programId String
+  batch     Int
+  cgpa      Float?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user          User                 @relation(fields: [userId], references: [id])
+  program       Program              @relation(fields: [programId], references: [id])
+  registrations CourseRegistration[]
+  attendances   Attendance[]
+  results       Result[]
+  invoices      Invoice[]
+  payments      Payment[]
+
+  @@map("student_profiles")
+}

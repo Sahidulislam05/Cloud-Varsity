@@ -1,0 +1,17 @@
+model Result {
+  id            String    @id @default(cuid())
+  examId        String
+  studentId     String
+  obtainedMarks Float
+  gradeLetter   String?
+  gradePoint    Float?
+  publishedAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  exam    Exam           @relation(fields: [examId], references: [id])
+  student StudentProfile @relation(fields: [studentId], references: [id])
+
+  @@unique([examId, studentId])
+  @@map("results")
+}

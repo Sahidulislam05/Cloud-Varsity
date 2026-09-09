@@ -1,0 +1,114 @@
+model University {
+    id        String   @id @default(cuid())
+    name      String
+    address   String?
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    departments Department[]
+
+    @@map("universities")
+}
+
+model Department {
+    id           String    @id @default(cuid())
+    name         String
+    code         String    @unique
+    universityId String
+    deletedAt    DateTime?
+    createdAt    DateTime  @default(now())
+    updatedAt    DateTime  @updatedAt
+
+    university  University          @relation(fields: [universityId], references: [id])
+    programs    Program[]
+    instructors InstructorProfile[]
+
+    @@map("departments")
+}
+
+model Program {
+    id                String    @id @default(cuid())
+    name              String
+    code              String    @unique
+    departmentId      String
+    durationSemesters Int
+    deletedAt         DateTime?
+    createdAt         DateTime  @default(now())
+    updatedAt         DateTime  @updatedAt
+
+    department    Department       @relation(fields: [departmentId], references: [id])
+    courses       Course[]
+    students      StudentProfile[]
+    feeStructures FeeStructure[]
+
+    @@map("programs")
+}
+
+model Course {
+    id          String    @id @default(cuid())
+    title       String
+    code        String    @unique
+    creditHours Float
+    programId   String
+    deletedAt   DateTime?
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime  @updatedAt
+
+    program        Program              @relation(fields: [programId], references: [id])
+    sections       Section[]
+    prerequisiteOf CoursePrerequisite[] @relation("CourseToPrereq")
+    prerequisites  CoursePrerequisite[] @relation("PrereqToCourse")
+
+    @@map("courses")
+}
+
+model CoursePrerequisite {
+    id                   String @id @default(cuid())
+    courseId             String
+    prerequisiteCourseId String
+
+    course             Course @relation("CourseToPrereq", fields: [courseId], references: [id])
+    prerequisiteCourse Course @relation("PrereqToCourse", fields: [prerequisiteCourseId], references: [id])
+
+    @@unique([courseId, prerequisiteCourseId])
+    @@map("course_prerequisites")
+}
+
+model Semester {
+    id        String         @id @default(cuid())
+    name      String
+    year      Int
+    status    SemesterStatus @default(UPCOMING)
+    startDate DateTime
+    endDate   DateTime
+    createdAt DateTime       @default(now())
+    updatedAt DateTime       @updatedAt
+
+    sections      Section[]
+    feeStructures FeeStructure[]
+
+    @@unique([name, year])
+    @@map("semesters")
+}
+
+model Section {
+    id           String    @id @default(cuid())
+    name         String
+    courseId     String
+    semesterId   String
+    instructorId String
+    capacity     Int
+    deletedAt    DateTime?
+    createdAt    DateTime  @default(now())
+    updatedAt    DateTime  @updatedAt
+
+    course        Course               @relation(fields: [courseId], references: [id])
+    semester      Semester             @relation(fields: [semesterId], references: [id])
+    instructor    InstructorProfile    @relation(fields: [instructorId], references: [id])
+    registrations CourseRegistration[]
+    attendances   Attendance[]
+    exams         Exam[]
+
+    @@unique([courseId, semesterId, name])
+    @@map("sections")
+}

@@ -1,0 +1,52 @@
+enum Role {
+  STUDENT
+  INSTRUCTOR
+  DEPARTMENT_ADMIN
+  REGISTRAR
+  FINANCE_ADMIN
+  SUPER_ADMIN
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum SemesterStatus {
+  UPCOMING
+  ONGOING
+  COMPLETED
+}
+
+enum RegistrationStatus {
+  ENROLLED
+  DROPPED
+  COMPLETED
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+}
+
+enum ExamType {
+  QUIZ
+  ASSIGNMENT
+  MIDTERM
+  FINAL
+}
+
+enum InvoiceStatus {
+  PENDING
+  PAID
+  OVERDUE
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  CANCELLED
+}

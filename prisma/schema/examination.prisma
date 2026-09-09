@@ -1,0 +1,16 @@
+model Exam {
+  id          String   @id @default(cuid())
+  sectionId   String
+  createdById String
+  examType    ExamType
+  title       String
+  totalMarks  Float
+  examDate    DateTime
+  createdAt   DateTime @default(now())
+
+  section   Section           @relation(fields: [sectionId], references: [id])
+  createdBy InstructorProfile @relation(fields: [createdById], references: [id])
+  results   Result[]
+
+  @@map("exams")
+}
