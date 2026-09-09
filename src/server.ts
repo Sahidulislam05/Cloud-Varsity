@@ -12,11 +12,25 @@ const main = async () => {
     await prisma.$connect();
     console.log("Connected to the database successfully.");
 
-    // await redisClient.connect();
-    console.log("Redis Connected Successfully.");
+    try {
+      await redisClient.connect();
+      console.log("Redis connected successfully.");
+    } catch (redisError) {
+      console.error(
+        "Redis connection failed, continuing without cache:",
+        redisError,
+      );
+    }
 
-    // await transporter.verify();
-    console.log("Nodemailer Connected Successfully.");
+    try {
+      await transporter.verify();
+      console.log("Nodemailer connected successfully.");
+    } catch (mailError) {
+      console.error(
+        "Nodemailer verification failed, email sending may not work:",
+        mailError,
+      );
+    }
 
     await seedSuperAdmin();
 

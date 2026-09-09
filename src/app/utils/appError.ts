@@ -1,10 +1,17 @@
-export class appError extends Error {
+export class AppError extends Error {
   public statusCode: number;
+  public errors: { field?: string; message: string }[];
 
-  constructor(statusCode: number, message: string, stack = "") {
-    super(message); // throw new Error(message)
+  constructor(
+    statusCode: number,
+    message: string,
+    errors: { field?: string; message: string }[] = [],
+    stack = "",
+  ) {
+    super(message);
 
     this.statusCode = statusCode;
+    this.errors = errors.length ? errors : [{ message }];
 
     if (stack) {
       this.stack = stack;
@@ -14,4 +21,5 @@ export class appError extends Error {
   }
 }
 
-//throw new AppError(404, "Not Found")
+// throw new AppError(404, "Course not found")
+// throw new AppError(400, "Validation failed", [{ field: "email", message: "Invalid email" }])
