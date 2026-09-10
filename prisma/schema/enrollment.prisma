@@ -1,10 +1,13 @@
 model CourseRegistration {
-  id           String             @id @default(cuid())
-  studentId    String
-  sectionId    String
-  status       RegistrationStatus @default(ENROLLED)
-  registeredAt DateTime           @default(now())
-  droppedAt    DateTime?
+  id               String             @id @default(cuid())
+  studentId        String
+  sectionId        String
+  status           RegistrationStatus @default(ENROLLED)
+  registeredAt     DateTime           @default(now())
+  droppedAt        DateTime?
+  finalGradeLetter String?
+  finalGradePoint  Float?
+  completedAt      DateTime?
 
   student StudentProfile @relation(fields: [studentId], references: [id])
   section Section        @relation(fields: [sectionId], references: [id])
