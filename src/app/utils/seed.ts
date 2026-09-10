@@ -38,12 +38,12 @@ export const seedSuperAdmin = async () => {
     password: config.super_admin_password,
     role: "SUPER_ADMIN",
   });
-  await seedUserIfNotExists({
-    name: config.department_admin_name,
-    email: config.department_admin_email,
-    password: config.department_admin_password,
-    role: "DEPARTMENT_ADMIN",
-  });
+  // await seedUserIfNotExists({
+  //   name: config.department_admin_name,
+  //   email: config.department_admin_email,
+  //   password: config.department_admin_password,
+  //   role: "DEPARTMENT_ADMIN",
+  // });
   await seedUserIfNotExists({
     name: config.registrar_name,
     email: config.registrar_email,
@@ -134,4 +134,46 @@ export const seedStudent = async () => {
   });
 
   console.log(`Seeded STUDENT account: ${user.email}`);
+};
+
+export const seedUniversity = async () => {
+  const existing = await prisma.university.findFirst();
+  if (existing) return;
+
+  await prisma.university.create({
+    data: { name: "CloudVarsity University", address: "Dhaka, Bangladesh" },
+  });
+  console.log("Seeded default university");
+};
+
+export const seedDepartmentAdmin = async () => {
+  const existing = await prisma.user.findUnique({
+    where: { email: config.department_admin_email },
+  });
+  if (existing) return;
+
+  const department = await prisma.department.findFirst();
+  if (!department) {
+    console.log(
+      "Skipped seeding demo department admin: no department exists yet.",
+    );
+    return;
+  }
+
+  const hashedPassword = await bcrypt.hash(
+    config.department_admin_password,
+    Number(config.bcrypt_salt_rounds),
+  );
+  await prisma.user.create({
+    data: {
+      name: config.department_admin_name,
+      email: config.department_admin_email,
+      password: hashedPassword,
+      role: "DEPARTMENT_ADMIN",
+      departmentId: department.id,
+    },
+  });
+  console.log(
+    `Seeded DEPARTMENT_ADMIN account: ${config.department_admin_email}`,
+  );
 };

@@ -4,9 +4,11 @@ import { transporter } from "./app/lib/nodemailer";
 import { prisma } from "./app/lib/prisma";
 import { redisClient } from "./app/lib/redis";
 import {
+  seedDepartmentAdmin,
   seedInstructorAdmin,
   seedStudent,
   seedSuperAdmin,
+  seedUniversity,
 } from "./app/utils/seed";
 
 const PORT = config.port;
@@ -36,7 +38,9 @@ const main = async () => {
       );
     }
 
+    await seedUniversity();
     await seedSuperAdmin();
+    await seedDepartmentAdmin();
     await seedInstructorAdmin();
     await seedStudent();
 
