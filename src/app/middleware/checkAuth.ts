@@ -15,6 +15,7 @@ declare global {
         name: string;
         userId: string;
         role: Role;
+        departmentId: string | null;
       };
     }
   }
@@ -42,7 +43,13 @@ export const auth = (...requiredRoles: Role[]) => {
 
     const user = await prisma.user.findUnique({
       where: { id: decoded.userId },
-      select: { id: true, role: true, isActive: true, deletedAt: true },
+      select: {
+        id: true,
+        role: true,
+        isActive: true,
+        deletedAt: true,
+        departmentId: true,
+      },
     });
 
     if (!user || user.deletedAt) {
@@ -51,14 +58,12 @@ export const auth = (...requiredRoles: Role[]) => {
         "This account no longer exists",
       );
     }
-
     if (!user.isActive) {
       throw new AppError(
         httpStatus.FORBIDDEN,
         "Your account has been deactivated",
       );
     }
-
     if (requiredRoles.length && !requiredRoles.includes(user.role)) {
       throw new AppError(
         httpStatus.FORBIDDEN,
@@ -71,6 +76,7 @@ export const auth = (...requiredRoles: Role[]) => {
       name: decoded.name,
       email: decoded.email,
       role: user.role,
+      departmentId: user.departmentId,
     };
     next();
   });

@@ -16,6 +16,8 @@ model User {
   instructorProfile InstructorProfile?
   notifications     Notification[]
   auditLogs         AuditLog[]
+  departmentId      String?
+  department        Department?        @relation(fields: [departmentId], references: [id])
 
   @@index([role])
   @@map("users")
