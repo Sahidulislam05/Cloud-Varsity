@@ -17,6 +17,7 @@ import { ProgramRoutes } from "./app/module/program/program.route";
 import { CourseRoutes } from "./app/module/course/course.route";
 import { SemesterRoutes } from "./app/module/semester/semester.route";
 import { SectionRoutes } from "./app/module/section/section.route";
+import { EnrollmentRoutes } from "./app/module/enrollment/enrollment.route";
 
 const app: Application = express();
 
@@ -39,6 +40,7 @@ app.use("/api/v1/programs", ProgramRoutes);
 app.use("/api/v1/courses", CourseRoutes);
 app.use("/api/v1/semesters", SemesterRoutes);
 app.use("/api/v1/sections", SectionRoutes);
+app.use("/api/v1/enrollment", EnrollmentRoutes);
 
 app.get("/", async (req: Request, res: Response) => {
   res.status(httpStatus.OK).json({
