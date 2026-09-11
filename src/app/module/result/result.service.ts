@@ -8,6 +8,7 @@ import {
   calculateWeightedPercentage,
 } from "../../utils/grading";
 import type { TSubmitResultsPayload } from "./result.interface";
+import { NotificationService } from "../notification/notification.service";
 
 type TRequester = { userId: string; role: Role; departmentId: string | null };
 
@@ -109,6 +110,7 @@ const recalculateCgpa = async (studentId: string) => {
 const publishSectionResults = async (sectionId: string) => {
   const section = await prisma.section.findFirst({
     where: { id: sectionId, deletedAt: null },
+    include: { course: true },
   });
   if (!section) throw new AppError(httpStatus.NOT_FOUND, "Section not found");
 
@@ -181,6 +183,19 @@ const publishSectionResults = async (sectionId: string) => {
     .filter((id) => !skippedStudents.includes(id));
   for (const studentId of affectedStudentIds) {
     await recalculateCgpa(studentId);
+  }
+
+  const studentsToNotify = await prisma.studentProfile.findMany({
+    where: { id: { in: affectedStudentIds } },
+    select: { userId: true },
+  });
+
+  for (const s of studentsToNotify) {
+    await NotificationService.createNotification({
+      userId: s.userId,
+      title: "Result Published",
+      message: `Your result for ${section.course.title} has been published. Check your transcript for details.`,
+    });
   }
 
   return { publishedFor: affectedStudentIds.length, skipped: skippedStudents };
