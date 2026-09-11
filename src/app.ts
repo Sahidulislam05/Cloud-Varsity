@@ -21,6 +21,7 @@ import { EnrollmentRoutes } from "./app/module/enrollment/enrollment.route";
 import { AttendanceRoutes } from "./app/module/attendance/attendance.route";
 import { FinanceRoutes } from "./app/module/finance/finance.route";
 import { PaymentRoutes } from "./app/module/payment/payment.route";
+import { NotificationRoutes } from "./app/module/notification/notification.route";
 
 const app: Application = express();
 
@@ -47,6 +48,7 @@ app.use("/api/v1/enrollment", EnrollmentRoutes);
 app.use("/api/v1/attendance", AttendanceRoutes);
 app.use("/api/v1/fee-structures", FinanceRoutes);
 app.use("/api/v1/payments", PaymentRoutes);
+app.use("/api/v1/notifications", NotificationRoutes);
 
 app.get("/", async (req: Request, res: Response) => {
   res.status(httpStatus.OK).json({
