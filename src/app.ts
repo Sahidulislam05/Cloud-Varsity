@@ -22,6 +22,9 @@ import { AttendanceRoutes } from "./app/module/attendance/attendance.route";
 import { FinanceRoutes } from "./app/module/finance/finance.route";
 import { PaymentRoutes } from "./app/module/payment/payment.route";
 import { NotificationRoutes } from "./app/module/notification/notification.route";
+import { ReportRoutes } from "./app/module/report/report.route";
+import { AdminRoutes } from "./app/module/admin/admin.route";
+import { ResultRoutes } from "./app/module/result/result.route";
 
 const app: Application = express();
 
@@ -44,11 +47,14 @@ app.use("/api/v1/programs", ProgramRoutes);
 app.use("/api/v1/courses", CourseRoutes);
 app.use("/api/v1/semesters", SemesterRoutes);
 app.use("/api/v1/sections", SectionRoutes);
+app.use("/api/v1/results", ResultRoutes);
 app.use("/api/v1/enrollment", EnrollmentRoutes);
 app.use("/api/v1/attendance", AttendanceRoutes);
 app.use("/api/v1/fee-structures", FinanceRoutes);
 app.use("/api/v1/payments", PaymentRoutes);
 app.use("/api/v1/notifications", NotificationRoutes);
+app.use("/api/v1/admin", AdminRoutes);
+app.use("/api/v1/reports", ReportRoutes);
 
 app.get("/", async (req: Request, res: Response) => {
   res.status(httpStatus.OK).json({

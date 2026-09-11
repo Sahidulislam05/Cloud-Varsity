@@ -1,8 +1,18 @@
-import { Request, Response } from "express";
-import { catchAsync } from "../../utils/catchAsync";
-import { ResultService } from "./result.service";
-import { sendResponse } from "../../utils/sendResponse";
+import type { Request, Response } from "express";
 import httpStatus from "http-status";
+import { catchAsync } from "../../utils/catchAsync";
+import { sendResponse } from "../../utils/sendResponse";
+import { ResultService } from "./result.service";
+
+const submitResults = catchAsync(async (req: Request, res: Response) => {
+  const result = await ResultService.submitResults(req.body, req.user!);
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Results submitted successfully",
+    data: result,
+  });
+});
 
 const publishSectionResults = catchAsync(
   async (req: Request, res: Response) => {
@@ -12,13 +22,36 @@ const publishSectionResults = catchAsync(
     );
     sendResponse(res, {
       success: true,
-      statusCode: httpStatus.CREATED,
-      message: "Result published successfully",
+      statusCode: httpStatus.OK,
+      message: "Results published successfully",
       data: result,
     });
   },
 );
 
+const getMyResults = catchAsync(async (req: Request, res: Response) => {
+  const result = await ResultService.getMyResults(req.user!.userId);
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Results retrieved successfully",
+    data: result,
+  });
+});
+
+const getMyTranscript = catchAsync(async (req: Request, res: Response) => {
+  const result = await ResultService.getMyTranscript(req.user!.userId);
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Transcript retrieved successfully",
+    data: result,
+  });
+});
+
 export const ResultController = {
+  submitResults,
   publishSectionResults,
+  getMyResults,
+  getMyTranscript,
 };

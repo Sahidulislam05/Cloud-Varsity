@@ -1,3 +1,4 @@
+import { Prisma } from "../../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
 
 type TLogActionPayload = {
@@ -5,8 +6,8 @@ type TLogActionPayload = {
   action: string;
   entityName: string;
   entityId: string;
-  oldValue?: Record<string, unknown> | null;
-  newValue?: Record<string, unknown> | null;
+  oldValue?: Prisma.InputJsonValue | Prisma.NullableJsonNullValueInput;
+  newValue?: Prisma.InputJsonValue | Prisma.NullableJsonNullValueInput;
 };
 
 const logAction = async (payload: TLogActionPayload) => {
