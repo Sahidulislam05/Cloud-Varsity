@@ -25,16 +25,19 @@ import { NotificationRoutes } from "./app/module/notification/notification.route
 import { ReportRoutes } from "./app/module/report/report.route";
 import { AdminRoutes } from "./app/module/admin/admin.route";
 import { ResultRoutes } from "./app/module/result/result.route";
+import helmet from "helmet";
+import { globalRateLimiter } from "./app/middleware/rateLimiter";
 
 const app: Application = express();
 
+app.use(helmet());
 app.use(
   cors({
     origin: config.frontend_url,
     credentials: true,
   }),
 );
-
+app.use(globalRateLimiter);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());

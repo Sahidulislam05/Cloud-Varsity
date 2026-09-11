@@ -1,6 +1,17 @@
 import { prisma } from "../../lib/prisma";
+import { redisClient } from "../../lib/redis";
+
+const DASHBOARD_CACHE_KEY = "cache:dashboard-stats";
+const DASHBOARD_CACHE_TTL_SECONDS = 60;
 
 const getDashboardStats = async () => {
+  try {
+    const cached = await redisClient.get(DASHBOARD_CACHE_KEY);
+    if (cached) return JSON.parse(cached);
+  } catch (error) {
+    console.error("Dashboard cache read failed, falling back to DB:", error);
+  }
+
   const [
     totalStudents,
     totalInstructors,
@@ -31,7 +42,7 @@ const getDashboardStats = async () => {
       })
     : 0;
 
-  return {
+  const stats = {
     totalStudents,
     totalInstructors,
     totalCourses,
@@ -41,6 +52,16 @@ const getDashboardStats = async () => {
     totalRevenueCollected: Number(revenue._sum.amount ?? 0),
     pendingInvoices,
   };
+
+  try {
+    await redisClient.set(DASHBOARD_CACHE_KEY, JSON.stringify(stats), {
+      EX: DASHBOARD_CACHE_TTL_SECONDS,
+    });
+  } catch (error) {
+    console.error("Dashboard cache write failed:", error);
+  }
+
+  return stats;
 };
 
 export const AdminService = { getDashboardStats };
