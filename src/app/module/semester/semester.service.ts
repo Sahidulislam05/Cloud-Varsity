@@ -4,6 +4,7 @@ import { prisma } from "../../lib/prisma";
 import { AppError } from "../../utils/appError";
 import type { SemesterStatus } from "../../../generated/prisma/enums";
 import { TCreateSemesterPayload } from "../academics/academics.interface";
+import { AuditService } from "../audit/audit.service";
 
 const createSemester = async (payload: TCreateSemesterPayload) => {
   const existing = await prisma.semester.findUnique({
@@ -34,7 +35,11 @@ const VALID_TRANSITIONS: Record<SemesterStatus, SemesterStatus[]> = {
   COMPLETED: [],
 };
 
-const updateSemesterStatus = async (id: string, nextStatus: SemesterStatus) => {
+const updateSemesterStatus = async (
+  id: string,
+  nextStatus: SemesterStatus,
+  performedBy: string,
+) => {
   const semester = await prisma.semester.findUnique({ where: { id } });
   if (!semester) throw new AppError(httpStatus.NOT_FOUND, "Semester not found");
 
@@ -45,10 +50,21 @@ const updateSemesterStatus = async (id: string, nextStatus: SemesterStatus) => {
     );
   }
 
-  return prisma.semester.update({
+  const updated = await prisma.semester.update({
     where: { id },
     data: { status: nextStatus },
   });
+
+  await AuditService.logAction({
+    userId: performedBy,
+    action: "UPDATE_SEMESTER_STATUS",
+    entityName: "Semester",
+    entityId: id,
+    oldValue: { status: semester.status },
+    newValue: { status: nextStatus },
+  });
+
+  return updated;
 };
 
 export const SemesterService = {

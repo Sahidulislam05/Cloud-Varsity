@@ -1,4 +1,3 @@
-// src/app/module/academics/semester.controller.ts
 import type { Request, Response } from "express";
 import httpStatus from "http-status";
 import { catchAsync } from "../../utils/catchAsync";
@@ -29,6 +28,7 @@ const updateSemesterStatus = catchAsync(async (req: Request, res: Response) => {
   const result = await SemesterService.updateSemesterStatus(
     req.params.id as string,
     req.body.status,
+    req.user!.userId,
   );
   sendResponse(res, {
     success: true,

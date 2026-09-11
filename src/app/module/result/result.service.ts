@@ -9,6 +9,7 @@ import {
 } from "../../utils/grading";
 import type { TSubmitResultsPayload } from "./result.interface";
 import { NotificationService } from "../notification/notification.service";
+import { AuditService } from "../audit/audit.service";
 
 type TRequester = { userId: string; role: Role; departmentId: string | null };
 
@@ -107,7 +108,10 @@ const recalculateCgpa = async (studentId: string) => {
   });
 };
 
-const publishSectionResults = async (sectionId: string) => {
+const publishSectionResults = async (
+  sectionId: string,
+  performedBy: string,
+) => {
   const section = await prisma.section.findFirst({
     where: { id: sectionId, deletedAt: null },
     include: { course: true },
@@ -197,6 +201,17 @@ const publishSectionResults = async (sectionId: string) => {
       message: `Your result for ${section.course.title} has been published. Check your transcript for details.`,
     });
   }
+
+  await AuditService.logAction({
+    userId: performedBy,
+    action: "PUBLISH_RESULTS",
+    entityName: "Section",
+    entityId: sectionId,
+    newValue: {
+      publishedFor: affectedStudentIds.length,
+      skipped: skippedStudents.length,
+    },
+  });
 
   return { publishedFor: affectedStudentIds.length, skipped: skippedStudents };
 };

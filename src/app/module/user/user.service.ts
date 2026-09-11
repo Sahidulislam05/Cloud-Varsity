@@ -3,6 +3,7 @@ import httpStatus from "http-status";
 import { prisma } from "../../lib/prisma";
 import { AppError } from "../../utils/appError";
 import type { TUpdateProfilePayload, TUserListQuery } from "./user.interface";
+import { AuditService } from "../audit/audit.service";
 
 const getMe = async (userId: string) => {
   const user = await prisma.user.findUnique({
@@ -82,7 +83,11 @@ const getAllUsers = async (query: TUserListQuery) => {
   };
 };
 
-const updateUserStatus = async (userId: string, isActive: boolean) => {
+const updateUserStatus = async (
+  userId: string,
+  isActive: boolean,
+  performedBy: string,
+) => {
   const user = await prisma.user.findUnique({ where: { id: userId } });
   if (!user || user.deletedAt)
     throw new AppError(httpStatus.NOT_FOUND, "User not found");
@@ -94,11 +99,22 @@ const updateUserStatus = async (userId: string, isActive: boolean) => {
     );
   }
 
-  return prisma.user.update({
+  const updated = await prisma.user.update({
     where: { id: userId },
     data: { isActive },
     select: { id: true, name: true, email: true, isActive: true },
   });
+
+  await AuditService.logAction({
+    userId: performedBy,
+    action: "UPDATE_USER_STATUS",
+    entityName: "User",
+    entityId: userId,
+    oldValue: { isActive: user.isActive },
+    newValue: { isActive },
+  });
+
+  return updated;
 };
 
 export const UserService = { getMe, updateMe, getAllUsers, updateUserStatus };

@@ -8,6 +8,7 @@ import type {
   TUpdateCoursePayload,
 } from "../academics/academics.interface";
 import type { Role } from "../../../generated/prisma/enums";
+import { AuditService } from "../audit/audit.service";
 
 const createCourse = async (
   payload: TCreateCoursePayload,
@@ -125,7 +126,7 @@ const updateCourse = async (
 
 const deleteCourse = async (
   id: string,
-  requester: { role: Role; departmentId: string | null },
+  requester: { userId: string; role: Role; departmentId: string | null },
 ) => {
   const course = await prisma.course.findFirst({
     where: { id, deletedAt: null },
@@ -139,12 +140,21 @@ const deleteCourse = async (
     course.program.departmentId,
   );
 
-  return prisma.course.update({
+  const deleted = await prisma.course.update({
     where: { id },
     data: { deletedAt: new Date() },
   });
-};
 
+  await AuditService.logAction({
+    userId: requester.userId,
+    action: "DELETE_COURSE",
+    entityName: "Course",
+    entityId: id,
+    oldValue: { title: course.title, code: course.code },
+  });
+
+  return deleted;
+};
 export const CourseService = {
   createCourse,
   getAllCourses,

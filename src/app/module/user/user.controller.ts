@@ -41,7 +41,9 @@ const updateUserStatus = catchAsync(async (req: Request, res: Response) => {
   const result = await UserService.updateUserStatus(
     req.params.id as string,
     req.body.isActive,
+    req.user!.userId,
   );
+
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,

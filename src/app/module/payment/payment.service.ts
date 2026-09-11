@@ -5,6 +5,7 @@ import { sslCommerz } from "../../lib/sslcommerz";
 import { AppError } from "../../utils/appError";
 import { TInvoiceListQuery } from "../finance/finance.interface";
 import { NotificationService } from "../notification/notification.service";
+import { AuditService } from "../audit/audit.service";
 
 const initiatePayment = async (userId: string, invoiceId: string) => {
   const studentProfile = await prisma.studentProfile.findUnique({
@@ -113,6 +114,16 @@ const completePayment = async (transactionId: string, valId: string) => {
     `Dear ${payment.student.user.name}, your payment of ৳${payment.amount} has been received successfully.`,
   );
 
+  await AuditService.logAction({
+    userId: payment.student.userId,
+    action: "PAYMENT_SUCCESS",
+    entityName: "Invoice",
+    entityId: payment.invoiceId,
+    newValue: {
+      amount: Number(payment.amount),
+      transactionId: payment.transactionId,
+    },
+  });
   return result;
 };
 
