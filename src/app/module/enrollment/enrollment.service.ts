@@ -3,6 +3,7 @@ import type { Role } from "../../../generated/prisma/enums";
 import { prisma } from "../../lib/prisma";
 import { AppError } from "../../utils/appError";
 import type { TRegistrationListQuery } from "./enrollment.interface";
+import { NotificationService } from "../notification/notification.service";
 
 const registerCourse = async (userId: string, sectionId: string) => {
   const studentProfile = await prisma.studentProfile.findUnique({
@@ -13,7 +14,7 @@ const registerCourse = async (userId: string, sectionId: string) => {
 
   const section = await prisma.section.findFirst({
     where: { id: sectionId, deletedAt: null },
-    include: { semester: true },
+    include: { semester: true, course: true },
   });
   if (!section) throw new AppError(httpStatus.NOT_FOUND, "Section not found");
 
@@ -73,7 +74,7 @@ const registerCourse = async (userId: string, sectionId: string) => {
     }
   }
 
-  return prisma.$transaction(async (tx) => {
+  const registration = await prisma.$transaction(async (tx) => {
     const lockedSections = await tx.$queryRaw<
       { id: string; capacity: number }[]
     >`
@@ -106,6 +107,14 @@ const registerCourse = async (userId: string, sectionId: string) => {
       data: { studentId: studentProfile.id, sectionId, status: "ENROLLED" },
     });
   });
+
+  await NotificationService.createNotification({
+    userId,
+    title: "Course Registration Confirmed",
+    message: `You have successfully registered for ${section.course.title} (${section.name}).`,
+  });
+
+  return registration;
 };
 
 const dropCourse = async (userId: string, registrationId: string) => {
