@@ -8,6 +8,7 @@ import {
 import { FeeStructureController } from "./feeStructure.controller";
 
 const feeStructureRouter = Router();
+
 feeStructureRouter.post(
   "/",
   auth("FINANCE_ADMIN", "SUPER_ADMIN"),
