@@ -4,6 +4,7 @@ import { prisma } from "../../lib/prisma";
 import { sslCommerz } from "../../lib/sslcommerz";
 import { AppError } from "../../utils/appError";
 import { TInvoiceListQuery } from "../finance/finance.interface";
+import { NotificationService } from "../notification/notification.service";
 
 const initiatePayment = async (userId: string, invoiceId: string) => {
   const studentProfile = await prisma.studentProfile.findUnique({
@@ -69,7 +70,10 @@ const initiatePayment = async (userId: string, invoiceId: string) => {
 };
 
 const completePayment = async (transactionId: string, valId: string) => {
-  const payment = await prisma.payment.findUnique({ where: { transactionId } });
+  const payment = await prisma.payment.findUnique({
+    where: { transactionId },
+    include: { student: { include: { user: true } } },
+  });
   if (!payment)
     throw new AppError(httpStatus.NOT_FOUND, "Payment record not found");
 
@@ -85,7 +89,7 @@ const completePayment = async (transactionId: string, valId: string) => {
     throw new AppError(httpStatus.BAD_REQUEST, "Payment validation failed");
   }
 
-  return prisma.$transaction(async (tx) => {
+  const result = await prisma.$transaction(async (tx) => {
     const updatedPayment = await tx.payment.update({
       where: { transactionId },
       data: { status: "SUCCESS", paidAt: new Date() },
@@ -96,6 +100,20 @@ const completePayment = async (transactionId: string, valId: string) => {
     });
     return updatedPayment;
   });
+
+  await NotificationService.createNotification({
+    userId: payment.student.userId,
+    title: "Payment Successful",
+    message: `Your payment of ৳${payment.amount} has been received successfully.`,
+  });
+
+  await NotificationService.sendEmailNotification(
+    payment.student.user.email,
+    "Payment Confirmation - CloudVarsity",
+    `Dear ${payment.student.user.name}, your payment of ৳${payment.amount} has been received successfully.`,
+  );
+
+  return result;
 };
 
 const markPaymentFailed = async (transactionId: string) => {
