@@ -27,6 +27,7 @@ import { AdminRoutes } from "./app/module/admin/admin.route";
 import { ResultRoutes } from "./app/module/result/result.route";
 import helmet from "helmet";
 import { globalRateLimiter } from "./app/middleware/rateLimiter";
+import { ExamRoutes } from "./app/module/examination/exam.route";
 
 const app: Application = express();
 
@@ -50,6 +51,7 @@ app.use("/api/v1/programs", ProgramRoutes);
 app.use("/api/v1/courses", CourseRoutes);
 app.use("/api/v1/semesters", SemesterRoutes);
 app.use("/api/v1/sections", SectionRoutes);
+app.use("/api/v1/exams", ExamRoutes);
 app.use("/api/v1/results", ResultRoutes);
 app.use("/api/v1/enrollment", EnrollmentRoutes);
 app.use("/api/v1/attendance", AttendanceRoutes);
