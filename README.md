@@ -38,7 +38,6 @@ third-party payment gateway integration, and a clean, layered architecture.
 - [API Documentation](#-api-documentation)
 - [Getting Started](#-getting-started)
 - [Environment Variables](#-environment-variables)
-- [Demo Credentials](#-demo-credentials)
 - [Design Decisions & Trade-offs](#-design-decisions--trade-offs)
 - [Deployment](#-deployment)
 - [Author](#-author)
