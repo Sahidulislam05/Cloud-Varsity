@@ -10,6 +10,7 @@ import {
 import type { TSubmitResultsPayload } from "./result.interface";
 import { NotificationService } from "../notification/notification.service";
 import { AuditService } from "../audit/audit.service";
+import { sendTemplatedEmail } from "../../utils/sendTemplatedEmail";
 
 type TRequester = { userId: string; role: Role; departmentId: string | null };
 
@@ -189,17 +190,36 @@ const publishSectionResults = async (
     await recalculateCgpa(studentId);
   }
 
-  const studentsToNotify = await prisma.studentProfile.findMany({
-    where: { id: { in: affectedStudentIds } },
-    select: { userId: true },
+  const updatedRegistrations = await prisma.courseRegistration.findMany({
+    where: {
+      id: {
+        in: registrations
+          .filter((r) => !skippedStudents.includes(r.studentId))
+          .map((r) => r.id),
+      },
+    },
+    include: { student: { include: { user: true } } },
   });
 
-  for (const s of studentsToNotify) {
+  for (const reg of updatedRegistrations) {
     await NotificationService.createNotification({
-      userId: s.userId,
+      userId: reg.student.userId,
       title: "Result Published",
       message: `Your result for ${section.course.title} has been published. Check your transcript for details.`,
     });
+
+    await sendTemplatedEmail(
+      reg.student.user.email,
+      "Your Results Are Published - CloudVarsity",
+      "result-published",
+      {
+        name: reg.student.user.name,
+        courseTitle: section.course.title,
+        courseCode: section.course.code,
+        gradeLetter: reg.finalGradeLetter,
+        gradePoint: reg.finalGradePoint,
+      },
+    );
   }
 
   await AuditService.logAction({

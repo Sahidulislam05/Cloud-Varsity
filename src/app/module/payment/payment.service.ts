@@ -6,6 +6,7 @@ import { AppError } from "../../utils/appError";
 import { TInvoiceListQuery } from "../finance/finance.interface";
 import { NotificationService } from "../notification/notification.service";
 import { AuditService } from "../audit/audit.service";
+import { sendTemplatedEmail } from "../../utils/sendTemplatedEmail";
 
 const initiatePayment = async (userId: string, invoiceId: string) => {
   const studentProfile = await prisma.studentProfile.findUnique({
@@ -108,10 +109,20 @@ const completePayment = async (transactionId: string, valId: string) => {
     message: `Your payment of ৳${payment.amount} has been received successfully.`,
   });
 
-  await NotificationService.sendEmailNotification(
+  await sendTemplatedEmail(
     payment.student.user.email,
     "Payment Confirmation - CloudVarsity",
-    `Dear ${payment.student.user.name}, your payment of ৳${payment.amount} has been received successfully.`,
+    "payment-success",
+    {
+      name: payment.student.user.name,
+      amount: Number(payment.amount).toFixed(2),
+      transactionId: payment.transactionId,
+      paidAt: new Date().toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+      }),
+    },
   );
 
   await AuditService.logAction({

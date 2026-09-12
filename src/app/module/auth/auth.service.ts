@@ -17,6 +17,7 @@ import type {
   TRegisterPayload,
   TResetPasswordPayload,
 } from "./auth.interface";
+import { sendTemplatedEmail } from "../../utils/sendTemplatedEmail";
 
 const googleClient = new OAuth2Client(config.google_client_id);
 
@@ -90,6 +91,16 @@ const registerUser = async (payload: TRegisterPayload) => {
 
   const { accessToken, refreshToken } = generateAuthTokens(jwtPayload);
 
+  await sendTemplatedEmail(
+    result.email,
+    "Welcome to CloudVarsity!",
+    "welcome-email",
+    {
+      name: result.name,
+      studentId,
+      email: result.email,
+    },
+  );
   return { accessToken, refreshToken, user: jwtPayload };
 };
 

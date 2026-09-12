@@ -1,9 +1,9 @@
-// src/app/module/user/user.service.ts
 import httpStatus from "http-status";
 import { prisma } from "../../lib/prisma";
 import { AppError } from "../../utils/appError";
 import type { TUpdateProfilePayload, TUserListQuery } from "./user.interface";
 import { AuditService } from "../audit/audit.service";
+import { sendTemplatedEmail } from "../../utils/sendTemplatedEmail";
 
 const getMe = async (userId: string) => {
   const user = await prisma.user.findUnique({
@@ -114,6 +114,14 @@ const updateUserStatus = async (
     newValue: { isActive },
   });
 
+  await sendTemplatedEmail(
+    user.email,
+    isActive
+      ? "Your CloudVarsity Account Has Been Reactivated"
+      : "Your CloudVarsity Account Has Been Deactivated",
+    "account-status-changed",
+    { name: user.name, isActive },
+  );
   return updated;
 };
 

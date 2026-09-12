@@ -4,10 +4,12 @@ import { prisma } from "../../lib/prisma";
 import { AppError } from "../../utils/appError";
 import type { TRegistrationListQuery } from "./enrollment.interface";
 import { NotificationService } from "../notification/notification.service";
+import { sendTemplatedEmail } from "../../utils/sendTemplatedEmail";
 
 const registerCourse = async (userId: string, sectionId: string) => {
   const studentProfile = await prisma.studentProfile.findUnique({
     where: { userId },
+    include: { user: true },
   });
   if (!studentProfile)
     throw new AppError(httpStatus.NOT_FOUND, "Student profile not found");
@@ -113,6 +115,20 @@ const registerCourse = async (userId: string, sectionId: string) => {
     title: "Course Registration Confirmed",
     message: `You have successfully registered for ${section.course.title} (${section.name}).`,
   });
+
+  await sendTemplatedEmail(
+    studentProfile.user.email,
+    "Course Registration Confirmed",
+    "course-registration-confirmation",
+    {
+      name: studentProfile.user.name,
+      courseTitle: section.course.title,
+      courseCode: section.course.code,
+      sectionName: section.name,
+      semesterName: `${section.semester.name} ${section.semester.year}`,
+      creditHours: section.course.creditHours,
+    },
+  );
 
   return registration;
 };
