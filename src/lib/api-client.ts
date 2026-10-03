@@ -78,13 +78,13 @@ apiClient.interceptors.response.use(
     const originalRequest = error.config as
       | (AxiosRequestConfig & { _retried?: boolean })
       | undefined;
-    const isRefreshCall = originalRequest?.url?.includes("/auth/refresh-token");
 
+    const isAuthCall = originalRequest?.url?.startsWith("/auth/");
     if (
       error.response?.status === 401 &&
       originalRequest &&
       !originalRequest._retried &&
-      !isRefreshCall
+      !isAuthCall
     ) {
       originalRequest._retried = true;
       const newToken = await refreshAccessToken();
