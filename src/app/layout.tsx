@@ -11,8 +11,20 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CloudVarsity",
-  description: "University Management System",
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+  ),
+  title: {
+    default: "CloudVarsity — Digital University Management",
+    template: "%s | CloudVarsity",
+  },
+  description:
+    "CloudVarsity connects course registration, attendance, results, GPA and tuition payments in one secure university platform.",
+  openGraph: {
+    siteName: "CloudVarsity",
+    type: "website",
+    locale: "en_US",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
