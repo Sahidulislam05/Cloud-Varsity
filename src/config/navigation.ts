@@ -1,4 +1,3 @@
-// src/config/navigation.ts
 import {
   BookOpen,
   CalendarRange,
@@ -67,6 +66,7 @@ export const NAV_ITEMS: Record<Role, NavItem[]> = {
   SUPER_ADMIN: [
     { label: "Overview", href: "/super-admin", icon: LayoutDashboard },
     { label: "Users", href: "/super-admin/users", icon: Users },
+    { label: "Courses", href: "/super-admin/courses", icon: Library },
     {
       label: "Audit & Reports",
       href: "/super-admin/reports",

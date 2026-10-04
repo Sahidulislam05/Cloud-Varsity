@@ -1,11 +1,10 @@
-// src/hooks/use-student.ts
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { type ApiResponse, apiClient } from "@/lib/api-client";
 import { useAuthStore } from "@/store/auth-store";
-import type { Program } from "@/types/academics";
+// import type { Program } from "@/types/academics";
 import type {
   AttendanceData,
   BrowseSection,
@@ -16,11 +15,7 @@ import type {
   ResultRow,
   Transcript,
 } from "@/types/student";
-
-async function fetchData<T>(url: string, params?: Record<string, string>) {
-  const res = await apiClient.get<ApiResponse<T>>(url, { params });
-  return res.data.data;
-}
+import { fetchData } from "@/lib/fetch-data";
 
 export const useMyRegistrations = () =>
   useQuery({
@@ -64,11 +59,11 @@ export const useMyProfile = () =>
     queryFn: () => fetchData<Profile>("/user/me"),
   });
 
-export const usePrograms = () =>
-  useQuery({
-    queryKey: ["programs"],
-    queryFn: () => fetchData<Program[]>("/programs"),
-  });
+// export const usePrograms = () =>
+//   useQuery({
+//     queryKey: ["programs"],
+//     queryFn: () => fetchData<Program[]>("/programs"),
+//   });
 
 export const useMyAttendance = (sectionId: string | undefined) =>
   useQuery({

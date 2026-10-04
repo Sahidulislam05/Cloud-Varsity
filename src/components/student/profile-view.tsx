@@ -1,4 +1,3 @@
-// src/components/student/profile-view.tsx
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,14 +9,21 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { FormField } from "@/components/shared/form-field";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useMyProfile, usePrograms, useUpdateProfile } from "@/hooks/use-student";
+import { useMyProfile, useUpdateProfile } from "@/hooks/use-student";
 import { ApiError } from "@/lib/api-client";
 import { applyApiErrors } from "@/lib/form-errors";
 import { formatDate } from "@/lib/format";
 import type { Profile } from "@/types/student";
 import { profileSchema, ProfileValues } from "@/lib/validation/profile";
+import { usePrograms } from "@/hooks/use-academics";
 
 const GENDER_OPTIONS = [
   { value: "MALE", label: "Male" },
@@ -36,30 +42,65 @@ function ProfileForm({ profile }: { profile: Profile }) {
     formState: { errors, isSubmitting, isDirty },
   } = useForm<ProfileValues>({
     resolver: zodResolver(profileSchema),
-    defaultValues: { name: profile.name, phone: profile.phone ?? "", gender: profile.gender ?? "" },
+    defaultValues: {
+      name: profile.name,
+      phone: profile.phone ?? "",
+      gender: profile.gender ?? "",
+    },
   });
 
   const onSubmit = async (values: ProfileValues) => {
     try {
-      await update.mutateAsync({ name: values.name, phone: values.phone, gender: values.gender || undefined });
-      reset(values); 
+      await update.mutateAsync({
+        name: values.name,
+        phone: values.phone,
+        gender: values.gender || undefined,
+      });
+      reset(values);
     } catch (error) {
       if (applyApiErrors(error, setError, ["name", "phone", "gender"])) return;
-      toast.error(error instanceof ApiError ? error.message : "Could not update your profile");
+      toast.error(
+        error instanceof ApiError
+          ? error.message
+          : "Could not update your profile",
+      );
     }
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
       <FormField label="Full name" htmlFor="name" error={errors.name?.message}>
-        <Input id="name" autoComplete="name" aria-invalid={!!errors.name} aria-describedby={errors.name ? "name-error" : undefined} {...register("name")} />
+        <Input
+          id="name"
+          autoComplete="name"
+          aria-invalid={!!errors.name}
+          aria-describedby={errors.name ? "name-error" : undefined}
+          {...register("name")}
+        />
       </FormField>
 
-      <FormField label="Phone" htmlFor="phone" optional error={errors.phone?.message}>
-        <Input id="phone" type="tel" autoComplete="tel" aria-invalid={!!errors.phone} aria-describedby={errors.phone ? "phone-error" : undefined} {...register("phone")} />
+      <FormField
+        label="Phone"
+        htmlFor="phone"
+        optional
+        error={errors.phone?.message}
+      >
+        <Input
+          id="phone"
+          type="tel"
+          autoComplete="tel"
+          aria-invalid={!!errors.phone}
+          aria-describedby={errors.phone ? "phone-error" : undefined}
+          {...register("phone")}
+        />
       </FormField>
 
-      <FormField label="Gender" htmlFor="gender" optional error={errors.gender?.message}>
+      <FormField
+        label="Gender"
+        htmlFor="gender"
+        optional
+        error={errors.gender?.message}
+      >
         <Controller
           control={control}
           name="gender"
@@ -93,7 +134,13 @@ function ProfileForm({ profile }: { profile: Profile }) {
   );
 }
 
-function AccountDetails({ profile, programName }: { profile: Profile; programName: string | undefined }) {
+function AccountDetails({
+  profile,
+  programName,
+}: {
+  profile: Profile;
+  programName: string | undefined;
+}) {
   const details = [
     { label: "Email", value: profile.email },
     { label: "Student ID", value: profile.studentProfile?.studentId },
@@ -119,11 +166,17 @@ export function ProfileView() {
   const { data: profile, isLoading, isError, refetch } = useMyProfile();
   const { data: programs } = usePrograms();
 
-  const programName = programs?.find((program) => program.id === profile?.studentProfile?.programId)?.name;
+  const programName = programs?.find(
+    (program) => program.id === profile?.studentProfile?.programId,
+  )?.name;
 
   if (isError) {
     return (
-      <EmptyState icon={TriangleAlert} title="Could not load your profile" description="Please try again in a moment.">
+      <EmptyState
+        icon={TriangleAlert}
+        title="Could not load your profile"
+        description="Please try again in a moment."
+      >
         <Button variant="outline" size="sm" onClick={() => refetch()}>
           Try again
         </Button>
@@ -133,7 +186,10 @@ export function ProfileView() {
 
   return (
     <>
-      <DashboardHeader title="Profile & Settings" description="Your account details and personal information." />
+      <DashboardHeader
+        title="Profile & Settings"
+        description="Your account details and personal information."
+      />
 
       <div className="grid gap-6 lg:grid-cols-2">
         <section className="border border-border bg-card p-5">
