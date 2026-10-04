@@ -43,9 +43,22 @@ type CourseResultsProps = {
   programNames: Map<string, string>;
 };
 
-async function CourseResults({ page, search, programId, sort, programNames }: CourseResultsProps) {
+async function CourseResults({
+  page,
+  search,
+  programId,
+  sort,
+  programNames,
+}: CourseResultsProps) {
   const [sortBy, sortOrder] = sort.split("-");
-  const { data: courses, meta } = await getCourses({ page, limit: PAGE_SIZE, search, programId, sortBy, sortOrder });
+  const { data: courses, meta } = await getCourses({
+    page,
+    limit: PAGE_SIZE,
+    search,
+    programId,
+    sortBy,
+    sortOrder,
+  });
 
   if (courses.length === 0) {
     return (
@@ -64,16 +77,25 @@ async function CourseResults({ page, search, programId, sort, programNames }: Co
   return (
     <>
       <p className="mb-4 text-xs text-muted-foreground">
-        {meta?.total ?? courses.length} {(meta?.total ?? courses.length) === 1 ? "course" : "courses"}
+        {meta?.total ?? courses.length}{" "}
+        {(meta?.total ?? courses.length) === 1 ? "course" : "courses"}
       </p>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {courses.map((course) => (
-          <CourseCard key={course.id} course={course} programName={programNames.get(course.programId)} />
+          <CourseCard
+            key={course.id}
+            course={course}
+            programName={programNames.get(course.programId)}
+          />
         ))}
       </div>
       <div className="mt-8">
         <Suspense fallback={null}>
-          <Pagination page={meta?.page ?? page} totalPages={meta?.totalPages ?? 1} />
+          <Pagination
+            page={meta?.page ?? page}
+            totalPages={meta?.totalPages ?? 1}
+            anchor="courses"
+          />
         </Suspense>
       </div>
     </>
@@ -88,12 +110,21 @@ export default async function ProgramsPage(props: PageProps<"/programs">) {
   const programId = getParam(searchParams, "programId");
   const requestedSort = getParam(searchParams, "sort");
   // URL এ যা-ই লেখা থাক, শুধু আমাদের তালিকার মান গ্রহণ করি
-  const sort = SORT_OPTIONS.find((option) => option.value === requestedSort)?.value ?? DEFAULT_SORT;
+  const sort =
+    SORT_OPTIONS.find((option) => option.value === requestedSort)?.value ??
+    DEFAULT_SORT;
 
-  const [programsRes, departmentsRes] = await Promise.all([getPrograms(), getDepartments()]);
+  const [programsRes, departmentsRes] = await Promise.all([
+    getPrograms(),
+    getDepartments(),
+  ]);
   const programs = programsRes.data;
-  const departmentNames = new Map(departmentsRes.data.map((department) => [department.id, department.name]));
-  const programNames = new Map(programs.map((program) => [program.id, program.name]));
+  const departmentNames = new Map(
+    departmentsRes.data.map((department) => [department.id, department.name]),
+  );
+  const programNames = new Map(
+    programs.map((program) => [program.id, program.name]),
+  );
   const activeProgram = programs.find((program) => program.id === programId);
 
   return (
@@ -105,7 +136,10 @@ export default async function ProgramsPage(props: PageProps<"/programs">) {
       />
 
       <section className="mx-auto max-w-6xl px-4 py-12">
-        <SectionHeading title="Programs" description="Select a program to filter the course catalog below." />
+        <SectionHeading
+          title="Programs"
+          description="Select a program to filter the course catalog below."
+        />
         {programs.length > 0 ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {programs.map((program) => (
@@ -126,11 +160,16 @@ export default async function ProgramsPage(props: PageProps<"/programs">) {
         )}
       </section>
 
-      <section id="courses" className="mx-auto max-w-6xl scroll-mt-20 px-4 pb-16">
+      <section
+        id="courses"
+        className="mx-auto max-w-6xl scroll-mt-20 px-4 pb-16"
+      >
         <SectionHeading
           title="Course catalog"
           description={
-            activeProgram ? `Showing courses in ${activeProgram.name}` : "Search and filter every course on offer."
+            activeProgram
+              ? `Showing courses in ${activeProgram.name}`
+              : "Search and filter every course on offer."
           }
         />
 
@@ -141,9 +180,17 @@ export default async function ProgramsPage(props: PageProps<"/programs">) {
               paramName="programId"
               label="Program"
               allLabel="All programs"
-              options={programs.map((program) => ({ value: program.id, label: program.name }))}
+              options={programs.map((program) => ({
+                value: program.id,
+                label: program.name,
+              }))}
             />
-            <FilterSelect paramName="sort" label="Sort by" options={SORT_OPTIONS} defaultValue={DEFAULT_SORT} />
+            <FilterSelect
+              paramName="sort"
+              label="Sort by"
+              options={SORT_OPTIONS}
+              defaultValue={DEFAULT_SORT}
+            />
           </div>
         </Suspense>
 

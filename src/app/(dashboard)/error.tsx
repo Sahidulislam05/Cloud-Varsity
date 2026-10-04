@@ -2,12 +2,12 @@
 
 import { ErrorView } from "@/components/shared/error-view";
 
-export default function Error({
+export default function DashboardError({
   error,
   retry,
 }: {
   error: Error & { digest?: string };
   retry: () => void;
 }) {
-  return <ErrorView error={error} retry={retry} fullPage />;
+  return <ErrorView error={error} retry={retry} />;
 }

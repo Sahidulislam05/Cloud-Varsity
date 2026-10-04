@@ -24,11 +24,7 @@ function getPageItems(current: number, total: number): PageItem[] {
 
 type PaginationProps = { page: number; totalPages: number; anchor?: string };
 
-export function Pagination({
-  page,
-  totalPages,
-  anchor = "courses",
-}: PaginationProps) {
+export function Pagination({ page, totalPages, anchor }: PaginationProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
@@ -39,7 +35,7 @@ export function Pagination({
     if (target === 1) params.delete("page");
     else params.set("page", String(target));
     const query = params.toString();
-    return `${pathname}${query ? `?${query}` : ""}#${anchor}`;
+    return `${pathname}${query ? `?${query}` : ""}${anchor ? `#${anchor}` : ""}`;
   };
 
   return (

@@ -24,6 +24,7 @@ type AuthState = {
   setAccessToken: (accessToken: string) => void;
   clearAuth: () => void;
   finishHydrating: () => void;
+  updateUser: (patch: Partial<AuthUser>) => void;
 };
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -43,6 +44,11 @@ export const useAuthStore = create<AuthState>((set) => ({
     document.cookie = "session-role=; path=/; max-age=0";
     set({ user: null, accessToken: null, isAuthenticated: false });
   },
+
+  updateUser: (patch) =>
+    set((state) =>
+      state.user ? { user: { ...state.user, ...patch } } : state,
+    ),
 
   finishHydrating: () => set({ isHydrating: false }),
 }));
