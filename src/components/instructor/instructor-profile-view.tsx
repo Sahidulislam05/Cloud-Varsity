@@ -6,24 +6,23 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { ProfileForm } from "@/components/shared/profile-form";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { usePrograms } from "@/hooks/use-academics";
+import { useDepartments } from "@/hooks/use-academics";
 import { useMyProfile } from "@/hooks/use-profile";
 import { formatDate } from "@/lib/format";
 import type { Profile } from "@/types/student";
 
 function AccountDetails({
   profile,
-  programName,
+  departmentName,
 }: {
   profile: Profile;
-  programName: string | undefined;
+  departmentName: string | undefined;
 }) {
   const details = [
     { label: "Email", value: profile.email },
-    { label: "Student ID", value: profile.studentProfile?.studentId },
-    { label: "Program", value: programName },
-    { label: "Batch", value: profile.studentProfile?.batch },
-    { label: "CGPA", value: profile.studentProfile?.cgpa?.toFixed(2) },
+    { label: "Employee ID", value: profile.instructorProfile?.employeeId },
+    { label: "Department", value: departmentName },
+    { label: "Designation", value: profile.instructorProfile?.designation },
     { label: "Member since", value: formatDate(profile.createdAt) },
   ];
 
@@ -39,12 +38,12 @@ function AccountDetails({
   );
 }
 
-export function ProfileView() {
+export function InstructorProfileView() {
   const { data: profile, isLoading, isError, refetch } = useMyProfile();
-  const { data: programs } = usePrograms();
+  const { data: departments } = useDepartments();
 
-  const programName = programs?.find(
-    (program) => program.id === profile?.studentProfile?.programId,
+  const departmentName = departments?.find(
+    (department) => department.id === profile?.instructorProfile?.departmentId,
   )?.name;
 
   if (isError) {
@@ -78,7 +77,7 @@ export function ProfileView() {
               <Skeleton className="h-5 w-full" />
             </div>
           ) : (
-            <AccountDetails profile={profile} programName={programName} />
+            <AccountDetails profile={profile} departmentName={departmentName} />
           )}
         </section>
 

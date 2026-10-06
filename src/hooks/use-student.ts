@@ -3,8 +3,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { type ApiResponse, apiClient } from "@/lib/api-client";
-import { useAuthStore } from "@/store/auth-store";
-// import type { Program } from "@/types/academics";
 import type {
   AttendanceData,
   BrowseSection,
@@ -51,12 +49,6 @@ export const useMyInvoices = () =>
   useQuery({
     queryKey: ["student", "invoices"],
     queryFn: () => fetchData<Invoice[]>("/payments/my-invoices"),
-  });
-
-export const useMyProfile = () =>
-  useQuery({
-    queryKey: ["student", "profile"],
-    queryFn: () => fetchData<Profile>("/user/me"),
   });
 
 // export const usePrograms = () =>
@@ -120,31 +112,5 @@ export function useInitiatePayment() {
       window.location.assign(paymentUrl);
     },
     onError: (error) => toast.error(error.message),
-  });
-}
-
-export type UpdateProfileInput = {
-  name: string;
-  phone: string;
-  gender?: string;
-};
-
-export function useUpdateProfile() {
-  const queryClient = useQueryClient();
-  const updateUser = useAuthStore((state) => state.updateUser);
-
-  return useMutation({
-    mutationFn: async (input: UpdateProfileInput) => {
-      const res = await apiClient.patch<ApiResponse<{ name: string }>>(
-        "/user/me",
-        input,
-      );
-      return res.data.data;
-    },
-    onSuccess: (updated) => {
-      updateUser({ name: updated.name });
-      queryClient.invalidateQueries({ queryKey: ["student", "profile"] });
-      toast.success("Profile updated");
-    },
   });
 }

@@ -30,5 +30,7 @@ const dateTimeFormatter = new Intl.DateTimeFormat("en-GB", {
   minute: "2-digit",
 });
 
+export const todayLocal = () => new Date().toLocaleDateString("en-CA");
+
 export const formatDateTime = (value: string | Date) =>
   dateTimeFormatter.format(new Date(value));

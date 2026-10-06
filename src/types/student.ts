@@ -116,4 +116,10 @@ export type Profile = {
     batch: number;
     cgpa: number | null;
   } | null;
+
+  instructorProfile: {
+    employeeId: string;
+    departmentId: string;
+    designation: string;
+  } | null;
 };
