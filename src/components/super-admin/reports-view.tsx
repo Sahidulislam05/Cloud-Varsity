@@ -36,6 +36,7 @@ import type {
   FinanceReport,
   ResultReport,
 } from "@/types/admin";
+import { SemesterFilter } from "../shared/semester-filter";
 
 const TABS = [
   { value: "audit", label: "Audit Log" },
@@ -47,7 +48,6 @@ const TABS = [
 
 type TabValue = (typeof TABS)[number]["value"];
 
-// audit log এ যেসব entity এর নাম লেখা হয় (backend এর AuditService.logAction কলগুলো থেকে)
 const ENTITY_OPTIONS = ["User", "Semester", "Course", "Section", "Invoice"].map(
   (name) => ({ value: name, label: name }),
 );
@@ -140,21 +140,21 @@ function AuditLogTab() {
   );
 }
 
-function SemesterFilter() {
-  const { data: semesters = [] } = useSemesters();
+// function SemesterFilter() {
+//   const { data: semesters = [] } = useSemesters();
 
-  return (
-    <FilterSelect
-      paramName="semester"
-      label="Semester"
-      allLabel="All semesters"
-      options={semesters.map((semester) => ({
-        value: semester.id,
-        label: `${semester.name} ${semester.year}`,
-      }))}
-    />
-  );
-}
+//   return (
+//     <FilterSelect
+//       paramName="semester"
+//       label="Semester"
+//       allLabel="All semesters"
+//       options={semesters.map((semester) => ({
+//         value: semester.id,
+//         label: `${semester.name} ${semester.year}`,
+//       }))}
+//     />
+//   );
+// }
 
 const ENROLLMENT_COLUMNS: Column<EnrollmentReportRow>[] = [
   {

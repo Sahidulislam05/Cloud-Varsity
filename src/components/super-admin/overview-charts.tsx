@@ -82,10 +82,17 @@ export function EnrollmentChart({ className }: { className?: string }) {
   );
 }
 
-export function RevenueChart() {
-  const { data, isLoading } = useReport<FinanceReport>("finance");
+export function RevenueChart({
+  semesterId,
+  className,
+}: {
+  semesterId?: string;
+  className?: string;
+} = {}) {
+  const { data, isLoading } = useReport<FinanceReport>("finance", {
+    semesterId,
+  });
 
-  // slice এর রং ডেটার ভেতরেই (fill), Recharts 3 এ deprecated <Cell> লাগে না
   const pieData = data
     ? [
         {
@@ -104,6 +111,7 @@ export function RevenueChart() {
       isLoading={isLoading}
       isEmpty={!data || data.totalInvoiced === 0}
       emptyText="No invoices have been generated yet."
+      className={className}
     >
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
