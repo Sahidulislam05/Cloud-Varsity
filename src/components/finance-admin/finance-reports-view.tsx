@@ -1,4 +1,4 @@
-// src/components/finance-admin/finance-reports-view.tsx
+
 "use client";
 
 import { CircleDollarSign, Receipt, TrendingUp, Wallet } from "lucide-react";
