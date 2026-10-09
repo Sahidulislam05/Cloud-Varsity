@@ -122,4 +122,7 @@ export type Profile = {
     departmentId: string;
     designation: string;
   } | null;
+
+  departmentId: string | null;
+  department: { id: string; name: string; code: string } | null;
 };

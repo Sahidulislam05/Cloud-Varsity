@@ -1,4 +1,3 @@
-// src/components/super-admin/courses-view.tsx
 "use client";
 
 import { Pencil, Plus, Trash2 } from "lucide-react";
@@ -28,7 +27,12 @@ const SORT_OPTIONS = [
 ];
 const DEFAULT_SORT = SORT_OPTIONS[0].value;
 
-export function CoursesView() {
+type CoursesViewProps = { departmentId?: string; embedded?: boolean };
+
+export function CoursesView({
+  departmentId,
+  embedded = false,
+}: CoursesViewProps) {
   const searchParams = useSearchParams();
   const { page, limit } = usePagination();
   const search = searchParams.get("search") ?? "";
@@ -40,7 +44,7 @@ export function CoursesView() {
     DEFAULT_SORT;
   const [sortBy, sortOrder] = sort.split("-");
 
-  const { data: programs = [] } = usePrograms();
+  const { data: programs = [] } = usePrograms(departmentId);
   const { data, isLoading, isFetching, isError, refetch } =
     useListQuery<Course>("courses", "/courses", {
       page,
@@ -49,6 +53,7 @@ export function CoursesView() {
       programId,
       sortBy,
       sortOrder,
+      departmentId,
     });
   const deleteCourse = useDeleteCourse();
 
@@ -105,17 +110,23 @@ export function CoursesView() {
     },
   ];
 
+  const newCourseButton = (
+    <Button onClick={() => setFormTarget("new")}>
+      <Plus /> New course
+    </Button>
+  );
+
   return (
     <>
-      <DashboardHeader
-        title="Courses"
-        description="Create and manage the course catalog across every program."
-        actions={
-          <Button onClick={() => setFormTarget("new")}>
-            <Plus /> New course
-          </Button>
-        }
-      />
+      {embedded ? (
+        <div className="mb-4 flex justify-end">{newCourseButton}</div>
+      ) : (
+        <DashboardHeader
+          title="Courses"
+          description="Create and manage the course catalog across every program."
+          actions={newCourseButton}
+        />
+      )}
 
       <div className="mb-4 grid gap-3 lg:grid-cols-[1fr_auto_auto]">
         <SearchInput placeholder="Search by course title or code" />

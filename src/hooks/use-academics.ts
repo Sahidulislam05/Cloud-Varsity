@@ -5,10 +5,14 @@ import { fetchData } from "@/lib/fetch-data";
 import type { Department, Program } from "@/types/academics";
 import type { Semester } from "@/types/admin";
 
-export const usePrograms = () =>
+export const usePrograms = (departmentId?: string) =>
   useQuery({
-    queryKey: ["programs"],
-    queryFn: () => fetchData<Program[]>("/programs"),
+    queryKey: ["programs", departmentId ?? "all"],
+    queryFn: () =>
+      fetchData<Program[]>(
+        "/programs",
+        departmentId ? { departmentId } : undefined,
+      ),
   });
 
 export const useSemesters = () =>
