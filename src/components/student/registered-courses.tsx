@@ -1,4 +1,3 @@
-
 "use client";
 
 import { CalendarCheck } from "lucide-react";
@@ -23,12 +22,17 @@ export function RegisteredCourses() {
   const searchParams = useSearchParams();
   const status = searchParams.get("status") ?? "";
 
-  const { data, isLoading, isFetching, isError, refetch } = useMyRegistrations();
+  const { data, isLoading, isFetching, isError, refetch } =
+    useMyRegistrations();
   const dropCourse = useDropCourse();
   const [dropTarget, setDropTarget] = useState<Registration | null>(null);
-  const [attendanceTarget, setAttendanceTarget] = useState<Registration | null>(null);
+  const [attendanceTarget, setAttendanceTarget] = useState<Registration | null>(
+    null,
+  );
 
-  const rows = (data ?? []).filter((registration) => !status || registration.status === status);
+  const rows = (data ?? []).filter(
+    (registration) => !status || registration.status === status,
+  );
 
   const columns: Column<Registration>[] = [
     {
@@ -49,8 +53,18 @@ export function RegisteredCourses() {
       className: "hidden md:table-cell",
       cell: (r) => `${r.section.semester.name} ${r.section.semester.year}`,
     },
-    { key: "instructor", header: "Instructor", className: "hidden lg:table-cell", cell: (r) => r.section.instructor.user.name },
-    { key: "credits", header: "Credits", className: "hidden md:table-cell", cell: (r) => r.section.course.creditHours },
+    {
+      key: "instructor",
+      header: "Instructor",
+      className: "hidden lg:table-cell",
+      cell: (r) => r.section.instructor.user.name,
+    },
+    {
+      key: "credits",
+      header: "Credits",
+      className: "hidden md:table-cell",
+      cell: (r) => r.section.course.creditHours,
+    },
     {
       key: "status",
       header: "Status",
@@ -71,11 +85,19 @@ export function RegisteredCourses() {
       className: "text-right",
       cell: (r) => (
         <div className="flex justify-end gap-2">
-          <Button size="sm" variant="outline" onClick={() => setAttendanceTarget(r)}>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => setAttendanceTarget(r)}
+          >
             <CalendarCheck /> Attendance
           </Button>
           {r.status === "ENROLLED" && (
-            <Button size="sm" variant="outline" onClick={() => setDropTarget(r)}>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setDropTarget(r)}
+            >
               Drop
             </Button>
           )}
@@ -87,7 +109,12 @@ export function RegisteredCourses() {
   return (
     <>
       <div className="mb-4">
-        <FilterSelect paramName="status" label="Status" allLabel="All statuses" options={STATUS_OPTIONS} />
+        <FilterSelect
+          paramName="status"
+          label="Status"
+          allLabel="All statuses"
+          options={STATUS_OPTIONS}
+        />
       </div>
 
       <DataTable
@@ -99,8 +126,14 @@ export function RegisteredCourses() {
         isError={isError}
         onRetry={() => refetch()}
         caption="Your course registrations"
-        emptyTitle="No registrations yet"
-        emptyDescription="Open the Browse & Register tab to find sections with open seats."
+        emptyTitle={
+          status ? "No matching registrations" : "No registrations yet"
+        }
+        emptyDescription={
+          status
+            ? "Try a different status filter."
+            : "Open the Browse & Register tab to find sections with open seats."
+        }
       />
 
       <ConfirmDialog
@@ -115,10 +148,18 @@ export function RegisteredCourses() {
         confirmLabel="Drop course"
         destructive
         isPending={dropCourse.isPending}
-        onConfirm={() => dropTarget && dropCourse.mutate(dropTarget.id, { onSuccess: () => setDropTarget(null) })}
+        onConfirm={() =>
+          dropTarget &&
+          dropCourse.mutate(dropTarget.id, {
+            onSuccess: () => setDropTarget(null),
+          })
+        }
       />
 
-      <AttendanceSheet registration={attendanceTarget} onClose={() => setAttendanceTarget(null)} />
+      <AttendanceSheet
+        registration={attendanceTarget}
+        onClose={() => setAttendanceTarget(null)}
+      />
     </>
   );
 }
