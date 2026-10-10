@@ -1,10 +1,11 @@
 "use client";
 
-import { UserCheck, UserX } from "lucide-react";
+import { Building2, UserCheck, UserX } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { RoleBadge } from "@/components/dashboard/role-badge";
+import { AssignDepartmentDialog } from "@/components/super-admin/assign-department-dialog";
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import { type Column, DataTable } from "@/components/shared/data-table";
 import { FilterSelect } from "@/components/shared/filter-select";
@@ -34,6 +35,8 @@ export function UsersView() {
   const currentUser = useAuthStore((state) => state.user);
   const updateStatus = useUpdateUserStatus();
   const [target, setTarget] = useState<UserRow | null>(null);
+  const [assignTarget, setAssignTarget] = useState<UserRow | null>(null);
+
 
   const { data, isLoading, isFetching, isError, refetch } =
     useListQuery<UserRow>("users", "/user", {
@@ -82,17 +85,28 @@ export function UsersView() {
           return <span className="text-xs text-muted-foreground">—</span>;
         }
         return (
-          <Button size="sm" variant="outline" onClick={() => setTarget(user)}>
-            {user.isActive ? (
-              <>
-                <UserX /> Deactivate
-              </>
-            ) : (
-              <>
-                <UserCheck /> Activate
-              </>
+          <div className="flex items-center justify-end gap-2">
+            {user.role === "DEPARTMENT_ADMIN" && (
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => setAssignTarget(user)}
+              >
+                <Building2 /> Assign dept
+              </Button>
             )}
-          </Button>
+            <Button size="sm" variant="outline" onClick={() => setTarget(user)}>
+              {user.isActive ? (
+                <>
+                  <UserX /> Deactivate
+                </>
+              ) : (
+                <>
+                  <UserCheck /> Activate
+                </>
+              )}
+            </Button>
+          </div>
         );
       },
     },
@@ -128,6 +142,11 @@ export function UsersView() {
         emptyDescription="Try a different search term or role filter."
       />
       <TablePagination meta={data?.meta} />
+
+      <AssignDepartmentDialog
+        user={assignTarget}
+        onClose={() => setAssignTarget(null)}
+      />
 
       <ConfirmDialog
         open={target !== null}

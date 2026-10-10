@@ -17,3 +17,22 @@ export function useUpdateUserStatus() {
     onError: (error) => toast.error(error.message),
   });
 }
+
+export function useAssignDepartment() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      id,
+      departmentId,
+    }: {
+      id: string;
+      departmentId: string;
+    }) => apiClient.patch(`/user/${id}/department`, { departmentId }),
+    onSuccess: () => {
+      toast.success("Department assigned successfully");
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+    },
+    onError: (error) => toast.error(error.message),
+  });
+}
