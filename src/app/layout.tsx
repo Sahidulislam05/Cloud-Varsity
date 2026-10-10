@@ -43,6 +43,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         className="min-h-full flex flex-col"
         suppressHydrationWarning={true}
       >
+        
         <Providers>{children}</Providers>
       </body>
     </html>

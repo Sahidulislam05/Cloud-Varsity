@@ -84,7 +84,7 @@ export function RegisteredCourses() {
       header: "Actions",
       className: "text-right",
       cell: (r) => (
-        <div className="flex justify-end gap-2">
+        <div className="flex flex-wrap justify-end gap-2">
           <Button
             size="sm"
             variant="outline"
