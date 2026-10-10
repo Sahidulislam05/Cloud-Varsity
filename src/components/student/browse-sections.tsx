@@ -1,7 +1,13 @@
-
 "use client";
 
-import { BookX, CalendarRange, Loader2, UserRound, Users } from "lucide-react";
+import {
+  BookX,
+  CalendarRange,
+  Loader2,
+  TriangleAlert,
+  UserRound,
+  Users,
+} from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { CardGridSkeleton } from "@/components/public/skeletons";
 import { EmptyState } from "@/components/shared/empty-state";
@@ -10,9 +16,20 @@ import { SearchInput } from "@/components/shared/search-input";
 import { TablePagination } from "@/components/shared/table-pagination";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { usePagination } from "@/hooks/use-pagination";
-import { useMyRegistrations, useRegisterCourse, useSections } from "@/hooks/use-student";
+import {
+  useMyRegistrations,
+  useRegisterCourse,
+  useSections,
+} from "@/hooks/use-student";
 import { paginate } from "@/lib/paginate";
 import { cn } from "@/lib/utils";
 import type { BrowseSection, Registration } from "@/types/student";
@@ -27,11 +44,18 @@ type SectionCardProps = {
   onRegister: () => void;
 };
 
-function SectionCard({ section, registration, isPending, disabled, onRegister }: SectionCardProps) {
+function SectionCard({
+  section,
+  registration,
+  isPending,
+  disabled,
+  onRegister,
+}: SectionCardProps) {
   const seatsLeft = section.capacity - section._count.registrations;
   const full = seatsLeft <= 0;
 
-  let label = registration?.status === "DROPPED" ? "Register again" : "Register";
+  let label =
+    registration?.status === "DROPPED" ? "Register again" : "Register";
   let blocked = false;
   if (registration?.status === "ENROLLED") {
     label = "Registered";
@@ -64,13 +88,25 @@ function SectionCard({ section, registration, isPending, disabled, onRegister }:
           <UserRound className="size-3.5" aria-hidden="true" />
           {section.instructor.user.name}
         </p>
-        <p className={cn("flex items-center gap-1.5", full && "font-medium text-destructive")}>
+        <p
+          className={cn(
+            "flex items-center gap-1.5",
+            full && "font-medium text-destructive",
+          )}
+        >
           <Users className="size-3.5" aria-hidden="true" />
-          {full ? "No seats left" : `${seatsLeft} of ${section.capacity} seats left`}
+          {full
+            ? "No seats left"
+            : `${seatsLeft} of ${section.capacity} seats left`}
         </p>
       </CardContent>
       <CardFooter>
-        <Button size="sm" className="w-full" disabled={blocked || disabled} onClick={onRegister}>
+        <Button
+          size="sm"
+          className="w-full"
+          disabled={blocked || disabled}
+          onClick={onRegister}
+        >
           {isPending ? (
             <>
               <Loader2 className="animate-spin" /> Registering…
@@ -94,12 +130,17 @@ export function BrowseSections() {
   const registrationsQuery = useMyRegistrations();
   const register = useRegisterCourse();
 
-  const registrationBySection = new Map((registrationsQuery.data ?? []).map((r) => [r.sectionId, r]));
+  const registrationBySection = new Map(
+    (registrationsQuery.data ?? []).map((r) => [r.sectionId, r]),
+  );
 
-  // শেষ হয়ে যাওয়া semester এ রেজিস্ট্রেশন বন্ধ, তাই সেগুলো দেখাই না
-  const openSections = (sectionsQuery.data ?? []).filter((section) => section.semester.status !== "COMPLETED");
+  const openSections = (sectionsQuery.data ?? []).filter(
+    (section) => section.semester.status !== "COMPLETED",
+  );
 
-  const semesterOptions = [...new Map(openSections.map((s) => [s.semester.id, s.semester])).values()].map((semester) => ({
+  const semesterOptions = [
+    ...new Map(openSections.map((s) => [s.semester.id, s.semester])).values(),
+  ].map((semester) => ({
     value: semester.id,
     label: `${semester.name} ${semester.year}`,
   }));
@@ -107,7 +148,9 @@ export function BrowseSections() {
   const filtered = openSections.filter(
     (section) =>
       (!semesterId || section.semesterId === semesterId) &&
-      (!search || section.course.title.toLowerCase().includes(search) || section.course.code.toLowerCase().includes(search)),
+      (!search ||
+        section.course.title.toLowerCase().includes(search) ||
+        section.course.code.toLowerCase().includes(search)),
   );
   const { rows, meta } = paginate(filtered, page, limit);
 
@@ -115,16 +158,39 @@ export function BrowseSections() {
     <>
       <div className="mb-4 grid gap-3 sm:grid-cols-[1fr_auto]">
         <SearchInput placeholder="Search by course title or code" />
-        <FilterSelect paramName="semester" label="Semester" allLabel="All semesters" options={semesterOptions} />
+        <FilterSelect
+          paramName="semester"
+          label="Semester"
+          allLabel="All semesters"
+          options={semesterOptions}
+        />
       </div>
 
       {sectionsQuery.isLoading ? (
         <CardGridSkeleton count={PAGE_SIZE} />
+      ) : sectionsQuery.isError ? (
+        <EmptyState
+          icon={TriangleAlert}
+          title="Could not load sections"
+          description="Please try again in a moment."
+        >
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => sectionsQuery.refetch()}
+          >
+            Try again
+          </Button>
+        </EmptyState>
       ) : rows.length === 0 ? (
         <EmptyState
           icon={BookX}
           title="No sections found"
-          description={openSections.length === 0 ? "No sections are open for registration right now." : "Try a different search term or semester."}
+          description={
+            openSections.length === 0
+              ? "No sections are open for registration right now."
+              : "Try a different search term or semester."
+          }
         />
       ) : (
         <>
@@ -134,7 +200,9 @@ export function BrowseSections() {
                 key={section.id}
                 section={section}
                 registration={registrationBySection.get(section.id)}
-                isPending={register.isPending && register.variables === section.id}
+                isPending={
+                  register.isPending && register.variables === section.id
+                }
                 disabled={register.isPending}
                 onRegister={() => register.mutate(section.id)}
               />
