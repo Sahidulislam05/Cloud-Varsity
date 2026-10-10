@@ -1,4 +1,3 @@
-// src/components/shared/data-table.tsx
 import { Inbox, TriangleAlert } from "lucide-react";
 import { EmptyState } from "@/components/shared/empty-state";
 import { Button } from "@/components/ui/button";
@@ -17,7 +16,7 @@ export type Column<T> = {
   key: string;
   header: string;
   cell: (row: T) => React.ReactNode;
-  className?: string; // যেমন "hidden md:table-cell" দিয়ে মোবাইলে কলাম লুকানো
+  className?: string;
 };
 
 type DataTableProps<T> = {
@@ -81,7 +80,7 @@ export function DataTable<T>({
   return (
     <div
       className={cn(
-        "border border-border bg-card transition-opacity",
+        "overflow-x-auto border border-border bg-card transition-opacity",
         isFetching && !isLoading && "opacity-60",
       )}
       aria-busy={isLoading || isFetching}
