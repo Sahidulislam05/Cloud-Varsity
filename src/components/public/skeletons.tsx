@@ -1,4 +1,3 @@
-
 import { Skeleton } from "@/components/ui/skeleton";
 
 export function CardGridSkeleton({ count = 6 }: { count?: number }) {

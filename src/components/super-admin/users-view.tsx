@@ -1,17 +1,18 @@
 "use client";
 
-import { Building2, UserCheck, UserX } from "lucide-react";
+import { Building2, UserCheck, UserPlus, UserX } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { RoleBadge } from "@/components/dashboard/role-badge";
-import { AssignDepartmentDialog } from "@/components/super-admin/assign-department-dialog";
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import { type Column, DataTable } from "@/components/shared/data-table";
 import { FilterSelect } from "@/components/shared/filter-select";
 import { SearchInput } from "@/components/shared/search-input";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { TablePagination } from "@/components/shared/table-pagination";
+import { AssignDepartmentDialog } from "@/components/super-admin/assign-department-dialog";
+import { CreateStaffDialog } from "@/components/super-admin/create-staff-dialog";
 import { Button } from "@/components/ui/button";
 import { useUpdateUserStatus } from "@/hooks/use-admin";
 import { useListQuery } from "@/hooks/use-list-query";
@@ -36,7 +37,7 @@ export function UsersView() {
   const updateStatus = useUpdateUserStatus();
   const [target, setTarget] = useState<UserRow | null>(null);
   const [assignTarget, setAssignTarget] = useState<UserRow | null>(null);
-
+  const [createOpen, setCreateOpen] = useState(false);
 
   const { data, isLoading, isFetching, isError, refetch } =
     useListQuery<UserRow>("users", "/user", {
@@ -119,6 +120,12 @@ export function UsersView() {
         description="Every account across all six roles."
       />
 
+      <div className="mb-4 flex justify-end">
+        <Button onClick={() => setCreateOpen(true)}>
+          <UserPlus /> Add staff
+        </Button>
+      </div>
+
       <div className="mb-4 grid gap-3 sm:grid-cols-[1fr_auto]">
         <SearchInput placeholder="Search by name or email" />
         <FilterSelect
@@ -142,6 +149,8 @@ export function UsersView() {
         emptyDescription="Try a different search term or role filter."
       />
       <TablePagination meta={data?.meta} />
+
+      <CreateStaffDialog open={createOpen} onOpenChange={setCreateOpen} />
 
       <AssignDepartmentDialog
         user={assignTarget}

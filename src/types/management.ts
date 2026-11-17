@@ -37,4 +37,4 @@ export type RegistrationRow = {
 };
 
 export type InvoiceGenerationSummary = { generated: number; skipped: number };
-export type PublishSummary = { publishedFor: number; skipped: number };
+export type PublishSummary = { publishedFor: number };

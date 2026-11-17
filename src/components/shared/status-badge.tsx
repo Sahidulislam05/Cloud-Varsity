@@ -22,6 +22,7 @@ const STATUS_TONE: Record<string, Tone> = {
   SUCCESS: "success",
   FAILED: "danger",
   CANCELLED: "neutral",
+  REFUND_REQUIRED: "warning",
   ENROLLED: "info",
   DROPPED: "neutral",
   COMPLETED: "success",

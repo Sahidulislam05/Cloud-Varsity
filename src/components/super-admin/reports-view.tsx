@@ -15,7 +15,7 @@ import { FilterSelect } from "@/components/shared/filter-select";
 import { StatCard } from "@/components/shared/stat-card";
 import { TablePagination } from "@/components/shared/table-pagination";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useSemesters, usePrograms } from "@/hooks/use-academics";
+import { usePrograms } from "@/hooks/use-academics";
 import { useListQuery } from "@/hooks/use-list-query";
 import { usePagination } from "@/hooks/use-pagination";
 import { useReport } from "@/hooks/use-reports";
@@ -139,22 +139,6 @@ function AuditLogTab() {
     </>
   );
 }
-
-// function SemesterFilter() {
-//   const { data: semesters = [] } = useSemesters();
-
-//   return (
-//     <FilterSelect
-//       paramName="semester"
-//       label="Semester"
-//       allLabel="All semesters"
-//       options={semesters.map((semester) => ({
-//         value: semester.id,
-//         label: `${semester.name} ${semester.year}`,
-//       }))}
-//     />
-//   );
-// }
 
 const ENROLLMENT_COLUMNS: Column<EnrollmentReportRow>[] = [
   {

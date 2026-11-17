@@ -1,6 +1,7 @@
 import type { ApiResponse } from "@/lib/api-client";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+// Server components call the backend directly (no browser, no cookies).
+const API_URL = process.env.API_URL;
 
 type ServerGetOptions = {
   query?: Record<string, string | number | undefined>;
@@ -11,7 +12,7 @@ export async function serverGet<T>(
   path: string,
   { query, revalidate = 300 }: ServerGetOptions = {},
 ): Promise<ApiResponse<T>> {
-  if (!API_URL) throw new Error("NEXT_PUBLIC_API_URL is not set");
+  if (!API_URL) throw new Error("API_URL is not set");
 
   const url = new URL(`${API_URL}${path}`);
   for (const [key, value] of Object.entries(query ?? {})) {

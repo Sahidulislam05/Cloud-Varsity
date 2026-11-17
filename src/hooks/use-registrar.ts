@@ -59,13 +59,8 @@ export function usePublishResults() {
       );
       return res.data.data;
     },
-    onSuccess: ({ publishedFor, skipped }) => {
-      toast.success(`Results published for ${publishedFor} student(s)`, {
-        description:
-          skipped > 0
-            ? `${skipped} skipped because they have no marks.`
-            : undefined,
-      });
+    onSuccess: ({ publishedFor }) => {
+      toast.success(`Results published for ${publishedFor} student(s)`);
 
       for (const key of [
         "sections",

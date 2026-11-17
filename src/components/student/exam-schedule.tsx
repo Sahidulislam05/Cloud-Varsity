@@ -1,4 +1,3 @@
-
 "use client";
 
 import { type Column, DataTable } from "@/components/shared/data-table";
@@ -8,14 +7,20 @@ import { formatDateTime, titleCase } from "@/lib/format";
 import type { ExamRow } from "@/types/student";
 
 const COLUMNS: Column<ExamRow>[] = [
-  { key: "date", header: "Date & time", cell: (exam) => formatDateTime(exam.examDate) },
+  {
+    key: "date",
+    header: "Date & time",
+    cell: (exam) => formatDateTime(exam.examDate),
+  },
   {
     key: "course",
     header: "Course",
     cell: (exam) => (
       <div>
         <p className="font-medium">{exam.section.course.title}</p>
-        <p className="text-xs text-muted-foreground">{exam.section.course.code}</p>
+        <p className="text-xs text-muted-foreground">
+          {exam.section.course.code}
+        </p>
       </div>
     ),
   },
@@ -25,13 +30,23 @@ const COLUMNS: Column<ExamRow>[] = [
     className: "hidden md:table-cell",
     cell: (exam) => `${exam.title} · ${titleCase(exam.examType)}`,
   },
-  { key: "marks", header: "Total marks", className: "hidden md:table-cell", cell: (exam) => exam.totalMarks },
+  {
+    key: "marks",
+    header: "Total marks",
+    className: "hidden md:table-cell",
+    cell: (exam) => exam.totalMarks,
+  },
   {
     key: "status",
     header: "Status",
     cell: (exam) => {
       const upcoming = new Date(exam.examDate) > new Date();
-      return <StatusBadge status={upcoming ? "UPCOMING" : "COMPLETED"} label={upcoming ? "Upcoming" : "Done"} />;
+      return (
+        <StatusBadge
+          status={upcoming ? "UPCOMING" : "COMPLETED"}
+          label={upcoming ? "Upcoming" : "Done"}
+        />
+      );
     },
   },
 ];

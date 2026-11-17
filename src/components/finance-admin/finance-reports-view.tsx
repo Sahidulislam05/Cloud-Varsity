@@ -1,4 +1,3 @@
-
 "use client";
 
 import { CircleDollarSign, Receipt, TrendingUp, Wallet } from "lucide-react";

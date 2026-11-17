@@ -28,8 +28,8 @@ import { ApiError } from "@/lib/api-client";
 import { applyApiErrors } from "@/lib/form-errors";
 import {
   SEMESTER_TERMS,
+  type SemesterValues,
   semesterSchema,
-  SemesterValues,
 } from "@/lib/validation/semester";
 
 function SemesterForm({ onDone }: { onDone: () => void }) {

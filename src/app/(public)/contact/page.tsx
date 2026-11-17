@@ -6,7 +6,8 @@ import { createMetadata } from "@/lib/seo";
 
 export const metadata = createMetadata({
   title: "Contact",
-  description: "Questions about admissions, courses or your account? Send the CloudVarsity team a message.",
+  description:
+    "Questions about admissions, courses or your account? Send the CloudVarsity team a message.",
   path: "/contact",
 });
 
@@ -25,25 +26,40 @@ export default async function ContactPage() {
         <aside className="space-y-6">
           {university?.address && (
             <div className="flex gap-3">
-              <MapPin className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden="true" />
+              <MapPin
+                className="mt-0.5 size-5 shrink-0 text-primary"
+                aria-hidden="true"
+              />
               <div>
                 <h2 className="text-sm font-semibold">{university.name}</h2>
-                <p className="mt-1 text-sm text-muted-foreground">{university.address}</p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {university.address}
+                </p>
               </div>
             </div>
           )}
           <div className="flex gap-3">
-            <Clock className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden="true" />
+            <Clock
+              className="mt-0.5 size-5 shrink-0 text-primary"
+              aria-hidden="true"
+            />
             <div>
               <h2 className="text-sm font-semibold">Office hours</h2>
-              <p className="mt-1 text-sm text-muted-foreground">Sunday to Thursday, 9:00 AM to 5:00 PM</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Sunday to Thursday, 9:00 AM to 5:00 PM
+              </p>
             </div>
           </div>
           <div className="flex gap-3">
-            <Mail className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden="true" />
+            <Mail
+              className="mt-0.5 size-5 shrink-0 text-primary"
+              aria-hidden="true"
+            />
             <div>
               <h2 className="text-sm font-semibold">Response time</h2>
-              <p className="mt-1 text-sm text-muted-foreground">We usually reply within two working days.</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                We usually reply within two working days.
+              </p>
             </div>
           </div>
         </aside>

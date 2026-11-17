@@ -410,8 +410,9 @@ function ReviewStep({
 
       {entries.length - filled.length > 0 && (
         <p className="text-xs text-muted-foreground">
-          {entries.length - filled.length} student(s) have no mark and will be
-          skipped. You can grade them later.
+          {entries.length - filled.length} student(s) have no mark yet. You can
+          grade them later; results can only be published once every student has
+          marks for every exam.
         </p>
       )}
       {filled.length === 0 && mode === "new" && (

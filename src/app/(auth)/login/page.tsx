@@ -1,13 +1,22 @@
 // src/app/(auth)/login/page.tsx
 import Link from "next/link";
 import { DemoLogin } from "@/components/auth/demo-login";
+import { GoogleLoginButton } from "@/components/auth/google-login-button";
 import { LoginForm } from "@/components/auth/login-form";
+import { IS_DEMO_MODE } from "@/lib/demo-accounts";
 import { createMetadata } from "@/lib/seo";
+
+const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+const googleEnabled = Boolean(GOOGLE_CLIENT_ID);
+// The "OR" divider separates the email form from the alternative sign-in
+// methods; it is pointless when neither Google login nor demo login exists
+const showDivider = IS_DEMO_MODE || googleEnabled;
 
 export const metadata = createMetadata({
   title: "Log in",
-  description:
-    "Log in to your CloudVarsity account, or try the platform instantly with a one-click demo login.",
+  description: IS_DEMO_MODE
+    ? "Log in to your CloudVarsity account, or try the platform instantly with a one-click demo login."
+    : "Log in to your CloudVarsity account.",
   path: "/login",
 });
 
@@ -23,16 +32,29 @@ export default function LoginPage() {
 
       <LoginForm />
 
-      <div
-        className="my-6 flex items-center gap-3 text-xs text-muted-foreground"
-        aria-hidden="true"
-      >
-        <span className="h-px flex-1 bg-border" />
-        OR
-        <span className="h-px flex-1 bg-border" />
-      </div>
+      <p className="mt-3 text-center text-xs text-muted-foreground">
+        <Link
+          href="/forgot-password"
+          className="font-medium text-primary hover:underline"
+        >
+          Forgot password?
+        </Link>
+      </p>
 
-      <DemoLogin />
+      {showDivider && (
+        <div
+          className="my-6 flex items-center gap-3 text-xs text-muted-foreground"
+          aria-hidden="true"
+        >
+          <span className="h-px flex-1 bg-border" />
+          OR
+          <span className="h-px flex-1 bg-border" />
+        </div>
+      )}
+
+      {GOOGLE_CLIENT_ID && <GoogleLoginButton clientId={GOOGLE_CLIENT_ID} />}
+
+      {IS_DEMO_MODE && <DemoLogin />}
 
       <p className="mt-6 text-center text-xs text-muted-foreground">
         New student?{" "}

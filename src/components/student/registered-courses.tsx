@@ -3,11 +3,11 @@
 import { CalendarCheck } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
-import { AttendanceSheet } from "@/components/student/attendance-sheet";
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import { type Column, DataTable } from "@/components/shared/data-table";
 import { FilterSelect } from "@/components/shared/filter-select";
 import { StatusBadge } from "@/components/shared/status-badge";
+import { AttendanceSheet } from "@/components/student/attendance-sheet";
 import { Button } from "@/components/ui/button";
 import { useDropCourse, useMyRegistrations } from "@/hooks/use-student";
 import type { Registration } from "@/types/student";

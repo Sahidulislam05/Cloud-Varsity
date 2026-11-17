@@ -10,8 +10,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { CardGridSkeleton } from "@/components/public/skeletons";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
+import { CardGridSkeleton } from "@/components/public/skeletons";
 import { EmptyState } from "@/components/shared/empty-state";
 import { FilterSelect } from "@/components/shared/filter-select";
 import { SearchInput } from "@/components/shared/search-input";

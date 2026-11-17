@@ -80,7 +80,12 @@ export type AttendanceData = {
   };
 };
 
-export type PaymentStatus = "PENDING" | "SUCCESS" | "FAILED" | "CANCELLED";
+export type PaymentStatus =
+  | "PENDING"
+  | "SUCCESS"
+  | "FAILED"
+  | "CANCELLED"
+  | "REFUND_REQUIRED";
 
 export type PaymentRecord = {
   id: string;

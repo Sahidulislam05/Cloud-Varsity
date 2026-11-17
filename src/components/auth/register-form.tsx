@@ -19,9 +19,8 @@ import {
 import { useRegister } from "@/hooks/use-auth";
 import { ApiError } from "@/lib/api-client";
 import { applyApiErrors } from "@/lib/form-errors";
-
+import { type RegisterValues, registerSchema } from "@/lib/validation/auth";
 import type { Program } from "@/types/academics";
-import { registerSchema, RegisterValues } from "@/lib/validation/auth";
 
 type RegisterFormProps = { programs: Program[]; batchYears: string[] };
 

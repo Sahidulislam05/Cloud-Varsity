@@ -3,17 +3,16 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { type ApiResponse, apiClient } from "@/lib/api-client";
+import { fetchData } from "@/lib/fetch-data";
 import type {
   AttendanceData,
   BrowseSection,
   ExamRow,
   Invoice,
-  Profile,
   Registration,
   ResultRow,
   Transcript,
 } from "@/types/student";
-import { fetchData } from "@/lib/fetch-data";
 
 export const useMyRegistrations = () =>
   useQuery({
@@ -50,12 +49,6 @@ export const useMyInvoices = () =>
     queryKey: ["student", "invoices"],
     queryFn: () => fetchData<Invoice[]>("/payments/my-invoices"),
   });
-
-// export const usePrograms = () =>
-//   useQuery({
-//     queryKey: ["programs"],
-//     queryFn: () => fetchData<Program[]>("/programs"),
-//   });
 
 export const useMyAttendance = (sectionId: string | undefined) =>
   useQuery({

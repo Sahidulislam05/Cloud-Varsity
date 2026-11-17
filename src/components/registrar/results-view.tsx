@@ -131,7 +131,7 @@ export function ResultsView() {
         title="Publish results for this section?"
         description={
           target
-            ? `${target.course.title} (Section ${target.name}): grades and CGPA are calculated for ${target._count.registrations} student(s) and they are notified. Marks become final and this cannot be undone.`
+            ? `${target.course.title} (Section ${target.name}): grades and CGPA are calculated for ${target._count.registrations} student(s) and they are notified. Publishing needs a FINAL exam and marks for every student in every exam. Marks become final and this cannot be undone.`
             : ""
         }
         confirmLabel="Publish results"

@@ -1,4 +1,3 @@
-
 "use client";
 
 import { type Column, DataTable } from "@/components/shared/data-table";
@@ -13,7 +12,9 @@ const COLUMNS: Column<ResultRow>[] = [
     cell: (result) => (
       <div>
         <p className="font-medium">{result.exam.section.course.title}</p>
-        <p className="text-xs text-muted-foreground">{result.exam.section.course.code}</p>
+        <p className="text-xs text-muted-foreground">
+          {result.exam.section.course.code}
+        </p>
       </div>
     ),
   },
@@ -23,11 +24,18 @@ const COLUMNS: Column<ResultRow>[] = [
     cell: (result) => (
       <div>
         <p>{result.exam.title}</p>
-        <p className="text-xs text-muted-foreground">{titleCase(result.exam.examType)}</p>
+        <p className="text-xs text-muted-foreground">
+          {titleCase(result.exam.examType)}
+        </p>
       </div>
     ),
   },
-  { key: "date", header: "Date", className: "hidden md:table-cell", cell: (result) => formatDate(result.exam.examDate) },
+  {
+    key: "date",
+    header: "Date",
+    className: "hidden md:table-cell",
+    cell: (result) => formatDate(result.exam.examDate),
+  },
   {
     key: "marks",
     header: "Marks",
@@ -41,7 +49,8 @@ const COLUMNS: Column<ResultRow>[] = [
     key: "percent",
     header: "Score",
     className: "hidden sm:table-cell",
-    cell: (result) => `${Math.round((result.obtainedMarks / result.exam.totalMarks) * 100)}%`,
+    cell: (result) =>
+      `${Math.round((result.obtainedMarks / result.exam.totalMarks) * 100)}%`,
   },
 ];
 

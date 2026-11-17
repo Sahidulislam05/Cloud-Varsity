@@ -13,17 +13,17 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { ChartCard } from "@/components/super-admin/chart-card";
 import {
   AXIS_TICK,
   TOOLTIP_STYLE,
 } from "@/components/super-admin/chart-styles";
-import { ChartCard } from "@/components/super-admin/chart-card";
 import { useReport } from "@/hooks/use-reports";
 import { type ApiResponse, apiClient } from "@/lib/api-client";
 import { formatCurrency } from "@/lib/format";
 import { ROLE_LABEL } from "@/lib/roles";
-import type { EnrollmentReportRow, FinanceReport } from "@/types/admin";
 import type { Role } from "@/store/auth-store";
+import type { EnrollmentReportRow, FinanceReport } from "@/types/admin";
 
 export function EnrollmentChart({ className }: { className?: string }) {
   const { data, isLoading } = useReport<EnrollmentReportRow[]>("enrollment");

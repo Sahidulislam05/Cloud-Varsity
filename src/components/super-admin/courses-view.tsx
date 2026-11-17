@@ -11,10 +11,10 @@ import { SearchInput } from "@/components/shared/search-input";
 import { TablePagination } from "@/components/shared/table-pagination";
 import { CourseFormDialog } from "@/components/super-admin/course-form-dialog";
 import { Button } from "@/components/ui/button";
+import { usePrograms } from "@/hooks/use-academics";
 import { useDeleteCourse } from "@/hooks/use-courses";
 import { useListQuery } from "@/hooks/use-list-query";
 import { usePagination } from "@/hooks/use-pagination";
-import { usePrograms } from "@/hooks/use-academics";
 import type { Course } from "@/types/academics";
 
 const SORT_OPTIONS = [

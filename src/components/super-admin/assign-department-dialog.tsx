@@ -20,8 +20,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useAssignDepartment } from "@/hooks/use-admin";
 import { useDepartments } from "@/hooks/use-academics";
+import { useAssignDepartment } from "@/hooks/use-admin";
 import type { UserRow } from "@/types/user";
 
 type AssignDepartmentDialogProps = {
@@ -119,4 +119,3 @@ export function AssignDepartmentDialog({
     </Dialog>
   );
 }
-

@@ -1,26 +1,20 @@
 "use client";
 
 import { useEffect } from "react";
-import { apiClient, type ApiResponse } from "@/lib/api-client";
+import { type ApiResponse, apiClient } from "@/lib/api-client";
 import { type Role, useAuthStore } from "@/store/auth-store";
 
 type MeResponse = { id: string; name: string; email: string; role: Role };
-
-const hasSessionHint = () =>
-  document.cookie
-    .split("; ")
-    .some((cookie) => cookie.startsWith("session-role="));
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const { setAuth, clearAuth, finishHydrating } = useAuthStore.getState();
 
     const hydrate = async () => {
-      if (!hasSessionHint()) {
-        finishHydrating();
-        return;
-      }
-
+      // The refresh-token cookie is httpOnly, so it is never readable here.
+      // We simply ask the backend: the cookie is the source of truth, and a
+      // failure means there is no session. The verified role from /user/me
+      // also refreshes the client-side cv_role UX cookie via setAuth.
       try {
         const refreshRes = await apiClient.post<
           ApiResponse<{ accessToken: string }>

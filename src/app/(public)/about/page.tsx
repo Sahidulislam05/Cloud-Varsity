@@ -1,11 +1,10 @@
-import { Award, Layers, MapPin, ShieldCheck } from "lucide-react";
+import { Award, Building2, Layers, MapPin, ShieldCheck } from "lucide-react";
 import { EmptyState } from "@/components/shared/empty-state";
 import { PageHeader } from "@/components/shared/page-header";
 import { SectionHeading } from "@/components/shared/section-heading";
 import { Badge } from "@/components/ui/badge";
 import { getDepartments, getUniversities } from "@/lib/public-data";
 import { createMetadata } from "@/lib/seo";
-import { Building2 } from "lucide-react";
 
 export const metadata = createMetadata({
   title: "About",
@@ -18,17 +17,20 @@ const VALUES = [
   {
     icon: ShieldCheck,
     title: "Security first",
-    description: "Role-based access, verified payments and a full audit trail protect every record.",
+    description:
+      "Role-based access, verified payments and a full audit trail protect every record.",
   },
   {
     icon: Layers,
     title: "One connected system",
-    description: "Registration, attendance, results and finance share a single source of truth.",
+    description:
+      "Registration, attendance, results and finance share a single source of truth.",
   },
   {
     icon: Award,
     title: "Academic integrity",
-    description: "Grades follow transparent rules and are published only after review.",
+    description:
+      "Grades follow transparent rules and are published only after review.",
   },
 ];
 
@@ -50,18 +52,24 @@ export default async function AboutPage() {
 
       <section className="mx-auto grid max-w-6xl gap-10 px-4 py-14 lg:grid-cols-2">
         <div>
-          <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">Our mission</h2>
+          <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">
+            Our mission
+          </h2>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            CloudVarsity brings the whole academic cycle into one system. Students register for courses and pay
-            fees online, instructors record attendance and results, and administrators keep every semester running
-            smoothly. Every action is protected by role-based access and recorded in an audit trail, so records stay
-            accurate and accountable.
+            CloudVarsity brings the whole academic cycle into one system.
+            Students register for courses and pay fees online, instructors
+            record attendance and results, and administrators keep every
+            semester running smoothly. Every action is protected by role-based
+            access and recorded in an audit trail, so records stay accurate and
+            accountable.
           </p>
         </div>
 
         {university && (
           <div className="border border-border bg-card p-6">
-            <p className="text-xs font-semibold tracking-widest text-primary uppercase">The university</p>
+            <p className="text-xs font-semibold tracking-widest text-primary uppercase">
+              The university
+            </p>
             <h3 className="mt-2 text-lg font-semibold">{university.name}</h3>
             {university.address && (
               <p className="mt-2 flex items-start gap-2 text-sm text-muted-foreground">
@@ -81,7 +89,9 @@ export default async function AboutPage() {
               <div key={title} className="border border-border bg-card p-5">
                 <Icon className="size-5 text-primary" aria-hidden="true" />
                 <h3 className="mt-3 text-sm font-semibold">{title}</h3>
-                <p className="mt-1 text-xs text-muted-foreground">{description}</p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {description}
+                </p>
               </div>
             ))}
           </div>
@@ -89,11 +99,17 @@ export default async function AboutPage() {
       </section>
 
       <section className="mx-auto max-w-6xl px-4 py-14">
-        <SectionHeading title="Our departments" description="The academic units that make up the university." />
+        <SectionHeading
+          title="Our departments"
+          description="The academic units that make up the university."
+        />
         {departments.length > 0 ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {departments.map((department) => (
-              <div key={department.id} className="flex items-start justify-between gap-2 border border-border bg-card p-4">
+              <div
+                key={department.id}
+                className="flex items-start justify-between gap-2 border border-border bg-card p-4"
+              >
                 <h3 className="text-sm font-semibold">{department.name}</h3>
                 <Badge variant="secondary">{department.code}</Badge>
               </div>

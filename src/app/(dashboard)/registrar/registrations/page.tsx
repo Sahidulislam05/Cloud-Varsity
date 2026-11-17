@@ -1,4 +1,3 @@
-
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { PageSkeleton } from "@/components/dashboard/page-skeleton";

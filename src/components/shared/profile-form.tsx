@@ -17,8 +17,8 @@ import {
 import { useUpdateProfile } from "@/hooks/use-profile";
 import { ApiError } from "@/lib/api-client";
 import { applyApiErrors } from "@/lib/form-errors";
+import { type ProfileValues, profileSchema } from "@/lib/validation/profile";
 import type { Profile } from "@/types/student";
-import { profileSchema, ProfileValues } from "@/lib/validation/profile";
 
 const GENDER_OPTIONS = [
   { value: "MALE", label: "Male" },

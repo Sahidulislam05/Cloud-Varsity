@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { useLogin } from "@/hooks/use-auth";
 import { ApiError } from "@/lib/api-client";
 import { applyApiErrors } from "@/lib/form-errors";
-import { loginSchema, LoginValues } from "@/lib/validation/auth";
+import { type LoginValues, loginSchema } from "@/lib/validation/auth";
 
 export function LoginForm() {
   const login = useLogin();

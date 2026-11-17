@@ -1,7 +1,6 @@
+import { cn } from "cn";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "../ui/skeleton";
-import { cn } from "cn";
-
 
 type ChartCardProps = {
   title: string;

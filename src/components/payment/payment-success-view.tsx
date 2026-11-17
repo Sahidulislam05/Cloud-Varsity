@@ -169,8 +169,36 @@ export function PaymentSuccessView({
     );
   }
 
+  if (payment.status === "REFUND_REQUIRED") {
+    return (
+      <PaymentResult
+        tone="warning"
+        icon={TriangleAlert}
+        title="Invoice was already paid"
+        description="This invoice had already been settled, so this extra payment will be refunded. Keep the transaction ID for reference."
+        details={[
+          {
+            label: "Amount to refund",
+            value: formatCurrency(Number(payment.amount)),
+          },
+          {
+            label: "Transaction ID",
+            value: (
+              <span className="font-mono text-xs break-all">
+                {payment.transactionId}
+              </span>
+            ),
+          },
+        ]}
+      >
+        {paymentsButton}
+        {dashboardButton}
+      </PaymentResult>
+    );
+  }
+
   if (payment.status === "PENDING") {
-    const gaveUp = status.dataUpdatedAt >= MAX_POLLS;
+    const gaveUp = status.pollCount >= MAX_POLLS;
 
     return (
       <PaymentResult

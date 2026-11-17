@@ -1,7 +1,8 @@
 import axios, { type AxiosError, type AxiosRequestConfig } from "axios";
 import { useAuthStore } from "@/store/auth-store";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+// Same-origin path; next.config.ts rewrites it to the backend (API_URL).
+const API_URL = "/api/v1";
 
 export class ApiError extends Error {
   statusCode: number;
@@ -26,10 +27,8 @@ export type ApiResponse<T> = {
   meta?: { page: number; limit: number; total: number; totalPages: number };
 };
 
-export const apiClient = axios.create({
-  baseURL: API_URL,
-  withCredentials: true, // cross-origin cookie পাঠাতে/গ্রহণ করতে বাধ্যতামূলক
-});
+// Same-origin requests send the httpOnly refresh cookie automatically.
+export const apiClient = axios.create({ baseURL: API_URL });
 
 // প্রতিটা request এ store থেকে access token তুলে Bearer header এ বসানো
 apiClient.interceptors.request.use((config) => {
@@ -48,8 +47,6 @@ const refreshAccessToken = async (): Promise<string | null> => {
     refreshPromise = axios
       .post<ApiResponse<{ accessToken: string }>>(
         `${API_URL}/auth/refresh-token`,
-        {},
-        { withCredentials: true },
       )
       .then((res) => {
         const token = res.data.data.accessToken;
@@ -57,7 +54,15 @@ const refreshAccessToken = async (): Promise<string | null> => {
         return token;
       })
       .catch(() => {
-        useAuthStore.getState().clearAuth();
+        // Only bounce to /login when a real session existed (user is
+        // hydrated). During hydration on a public page the user is still
+        // null and DashboardShell/anonymous views handle their own state.
+        const { user, clearAuth } = useAuthStore.getState();
+        const hadSession = Boolean(user);
+        clearAuth();
+        if (hadSession && typeof window !== "undefined") {
+          window.location.assign("/login");
+        }
         return null;
       })
       .finally(() => {

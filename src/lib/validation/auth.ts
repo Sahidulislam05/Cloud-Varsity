@@ -7,6 +7,32 @@ export const loginSchema = z.object({
 
 export type LoginValues = z.infer<typeof loginSchema>;
 
+export const forgotPasswordSchema = z.object({
+  email: z.email({ error: "Please enter a valid email address" }),
+});
+
+export type ForgotPasswordValues = z.infer<typeof forgotPasswordSchema>;
+
+export const resetPasswordSchema = z
+  .object({
+    email: z.email({ error: "Please enter a valid email address" }),
+    otp: z.string().regex(/^\d{6}$/, {
+      error: "Enter the 6-digit code from your email",
+    }),
+    newPassword: z
+      .string()
+      .min(6, { error: "Password must be at least 6 characters" }),
+    confirmPassword: z
+      .string()
+      .min(1, { error: "Please confirm your password" }),
+  })
+  .refine((values) => values.newPassword === values.confirmPassword, {
+    path: ["confirmPassword"],
+    error: "Passwords do not match",
+  });
+
+export type ResetPasswordValues = z.infer<typeof resetPasswordSchema>;
+
 export const registerSchema = z
   .object({
     name: z

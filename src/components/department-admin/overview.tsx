@@ -1,20 +1,30 @@
 // src/components/department-admin/overview.tsx
 "use client";
 
-import { ClipboardList, Layers, Library, Presentation, Users } from "lucide-react";
+import {
+  ClipboardList,
+  Layers,
+  Library,
+  Presentation,
+  Users,
+} from "lucide-react";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
-import { type DepartmentRef, DepartmentScope } from "@/components/department-admin/department-scope";
+import {
+  type DepartmentRef,
+  DepartmentScope,
+} from "@/components/department-admin/department-scope";
 import { type Column, DataTable } from "@/components/shared/data-table";
 import { StatCard } from "@/components/shared/stat-card";
 import { StatusBadge } from "@/components/shared/status-badge";
-import { useDepartmentSections, useInstructors } from "@/hooks/use-department";
 import { usePrograms } from "@/hooks/use-academics";
+import { useDepartmentSections, useInstructors } from "@/hooks/use-department";
 import { useTotal } from "@/hooks/use-total";
 import { formatNumber } from "@/lib/format";
 import { useAuthStore } from "@/store/auth-store";
 import type { BrowseSection } from "@/types/student";
 
-const fillRatio = (section: BrowseSection) => (section.capacity > 0 ? section._count.registrations / section.capacity : 0);
+const fillRatio = (section: BrowseSection) =>
+  section.capacity > 0 ? section._count.registrations / section.capacity : 0;
 
 const COLUMNS: Column<BrowseSection>[] = [
   {
@@ -53,7 +63,10 @@ const COLUMNS: Column<BrowseSection>[] = [
             {section._count.registrations} / {section.capacity}
           </p>
           <div className="mt-1 h-1.5 bg-muted" role="presentation">
-            <div className="h-full bg-primary" style={{ width: `${percent}%` }} />
+            <div
+              className="h-full bg-primary"
+              style={{ width: `${percent}%` }}
+            />
           </div>
         </div>
       );
@@ -66,23 +79,73 @@ function OverviewContent({ department }: { department: DepartmentRef }) {
   const programs = usePrograms(department.id);
   const instructors = useInstructors();
   const sections = useDepartmentSections(department.id);
-  const courseTotal = useTotal(["courses", "count", "department", department.id], "/courses", { departmentId: department.id });
+  const courseTotal = useTotal(
+    ["courses", "count", "department", department.id],
+    "/courses",
+    { departmentId: department.id },
+  );
   // /enrollment backend নিজেই Department Admin কে শুধু নিজের department এর registration দেখায় (Phase 5)
-  const enrollmentTotal = useTotal(["registrations", "count", "department"], "/enrollment", { status: "ENROLLED" });
+  const enrollmentTotal = useTotal(
+    ["registrations", "count", "department"],
+    "/enrollment",
+    { status: "ENROLLED" },
+  );
 
   const firstName = user?.name.split(" ")[0] ?? "";
-  const busiest = [...(sections.data ?? [])].sort((a, b) => fillRatio(b) - fillRatio(a)).slice(0, 6);
+  const busiest = [...(sections.data ?? [])]
+    .sort((a, b) => fillRatio(b) - fillRatio(a))
+    .slice(0, 6);
 
   return (
     <>
-      <DashboardHeader title={`Welcome back, ${firstName}`} description={`Department of ${department.name} (${department.code})`} />
+      <DashboardHeader
+        title={`Welcome back, ${firstName}`}
+        description={`Department of ${department.name} (${department.code})`}
+      />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
-        <StatCard label="Programs" value={programs.data && formatNumber(programs.data.length)} icon={Layers} isLoading={programs.isLoading} />
-        <StatCard label="Courses" value={courseTotal.data !== undefined ? formatNumber(courseTotal.data) : null} icon={Library} tone="info" isLoading={courseTotal.isLoading} />
-        <StatCard label="Instructors" value={instructors.data && formatNumber(instructors.data.length)} icon={Presentation} tone="accent" isLoading={instructors.isLoading} />
-        <StatCard label="Sections" value={sections.data && formatNumber(sections.data.length)} icon={Users} tone="info" isLoading={sections.isLoading} />
-        <StatCard label="Active enrollments" value={enrollmentTotal.data !== undefined ? formatNumber(enrollmentTotal.data) : null} icon={ClipboardList} tone="success" isLoading={enrollmentTotal.isLoading} />
+        <StatCard
+          label="Programs"
+          value={programs.data && formatNumber(programs.data.length)}
+          icon={Layers}
+          isLoading={programs.isLoading}
+        />
+        <StatCard
+          label="Courses"
+          value={
+            courseTotal.data !== undefined
+              ? formatNumber(courseTotal.data)
+              : null
+          }
+          icon={Library}
+          tone="info"
+          isLoading={courseTotal.isLoading}
+        />
+        <StatCard
+          label="Instructors"
+          value={instructors.data && formatNumber(instructors.data.length)}
+          icon={Presentation}
+          tone="accent"
+          isLoading={instructors.isLoading}
+        />
+        <StatCard
+          label="Sections"
+          value={sections.data && formatNumber(sections.data.length)}
+          icon={Users}
+          tone="info"
+          isLoading={sections.isLoading}
+        />
+        <StatCard
+          label="Active enrollments"
+          value={
+            enrollmentTotal.data !== undefined
+              ? formatNumber(enrollmentTotal.data)
+              : null
+          }
+          icon={ClipboardList}
+          tone="success"
+          isLoading={enrollmentTotal.isLoading}
+        />
       </div>
 
       <section className="mt-8">
@@ -105,5 +168,9 @@ function OverviewContent({ department }: { department: DepartmentRef }) {
 }
 
 export function DepartmentOverview() {
-  return <DepartmentScope>{(department) => <OverviewContent department={department} />}</DepartmentScope>;
+  return (
+    <DepartmentScope>
+      {(department) => <OverviewContent department={department} />}
+    </DepartmentScope>
+  );
 }

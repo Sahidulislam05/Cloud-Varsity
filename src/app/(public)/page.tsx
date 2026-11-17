@@ -1,6 +1,4 @@
 import { Building2, Layers, Library, TriangleAlert } from "lucide-react";
-import { CourseCard } from "@/components/public/course-card";
-import { ProgramCard } from "@/components/public/program-card";
 import { HeroSection } from "@/components/home/hero-section";
 import {
   Band,
@@ -11,6 +9,8 @@ import {
   SecuritySection,
   StepsSection,
 } from "@/components/home/static-sections";
+import { CourseCard } from "@/components/public/course-card";
+import { ProgramCard } from "@/components/public/program-card";
 import { EmptyState } from "@/components/shared/empty-state";
 import { Reveal } from "@/components/shared/reveal";
 import { SectionHeading } from "@/components/shared/section-heading";

@@ -2,6 +2,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import { useRef } from "react";
 import { fetchData } from "@/lib/fetch-data";
 import type { Invoice, PaymentRecord } from "@/types/student";
 
@@ -27,10 +28,21 @@ export function usePaymentStatus(
   transactionId: string | undefined,
   enabled: boolean,
 ) {
-  return useQuery({
+  // Successful fetches since this view mounted. We count them ourselves
+  // instead of reading query.state.dataUpdateCount: that counter is shared
+  // with /student/payments (same queryKey) and is never exposed by the
+  // observer result, while this view needs it to stop polling and to show
+  // the "gave up" state.
+  const pollCountRef = useRef(0);
+
+  const query = useQuery({
     // /student/payments এর সাথে একই key, তাই একই cache ভাগাভাগি হয়
     queryKey: ["student", "invoices"],
-    queryFn: () => fetchData<Invoice[]>("/payments/my-invoices"),
+    queryFn: async () => {
+      const data = await fetchData<Invoice[]>("/payments/my-invoices");
+      pollCountRef.current += 1;
+      return data;
+    },
     enabled: enabled && Boolean(transactionId),
     // ইউজারের নিজের invoice এর ভেতর থেকে শুধু এই transaction টা খুঁজে বের করি
     select: (invoices) => findPayment(invoices, transactionId),
@@ -38,9 +50,11 @@ export function usePaymentStatus(
     refetchInterval: (query) => {
       const current = findPayment(query.state.data, transactionId);
       return current?.payment.status === "PENDING" &&
-        query.state.dataUpdateCount < MAX_POLLS
+        pollCountRef.current < MAX_POLLS
         ? POLL_MS
         : false;
     },
   });
+
+  return { ...query, pollCount: pollCountRef.current };
 }

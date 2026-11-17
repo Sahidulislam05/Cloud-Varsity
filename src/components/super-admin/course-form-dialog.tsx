@@ -3,7 +3,6 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
-import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { FormField } from "@/components/shared/form-field";
@@ -31,9 +30,8 @@ import {
 } from "@/hooks/use-courses";
 import { ApiError } from "@/lib/api-client";
 import { applyApiErrors } from "@/lib/form-errors";
-
+import { type CourseValues, courseSchema } from "@/lib/validation/course";
 import type { Course, Program } from "@/types/academics";
-import { courseSchema, CourseValues } from "@/lib/validation/course";
 
 type CourseFormProps = {
   course: Course | null;
@@ -69,11 +67,6 @@ function CourseForm({ course, programs, onDone }: CourseFormProps) {
   const { data: options, isLoading: optionsLoading } = useProgramCourses(
     isEdit ? undefined : programId,
   );
-
-  // program বদলালে আগে বেছে নেওয়া prerequisite অর্থহীন হয়ে যায়
-  useEffect(() => {
-    if (!isEdit) setValue("prerequisiteCourseIds", []);
-  }, [programId, isEdit, setValue]);
 
   const onSubmit = async (values: CourseValues) => {
     try {
@@ -171,7 +164,11 @@ function CourseForm({ course, programs, onDone }: CourseFormProps) {
           render={({ field }) => (
             <Select
               value={field.value}
-              onValueChange={field.onChange}
+              onValueChange={(value) => {
+                field.onChange(value);
+                // Prerequisites belong to the previous program; reset them.
+                setValue("prerequisiteCourseIds", []);
+              }}
               disabled={isEdit}
             >
               <SelectTrigger

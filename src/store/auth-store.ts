@@ -15,6 +15,31 @@ export type AuthUser = {
   role: Role;
 };
 
+/**
+ * Client-side UX cookie for proxy.ts route gating.
+ *
+ * Written here from roles the backend has already verified (login/refresh +
+ * /user/me). Non-httpOnly on purpose, so clearAuth can remove it when a
+ * session ends without a logout call (e.g. a failed refresh).
+ *
+ * It is NOT a security boundary: it only routes. Every protected page is
+ * re-verified by DashboardShell after hydration, and all data access is
+ * authorized server-side via the Bearer token + role checks.
+ */
+const ROLE_COOKIE = "cv_role";
+const ROLE_COOKIE_MAX_AGE = 7 * 24 * 60 * 60; // 7 days, matches refresh TTL
+
+const secureFlag = () =>
+  window.location.protocol === "https:" ? "; secure" : "";
+
+const writeRoleCookie = (role: Role) => {
+  document.cookie = `${ROLE_COOKIE}=${role}; path=/; max-age=${ROLE_COOKIE_MAX_AGE}; samesite=lax${secureFlag()}`;
+};
+
+const clearRoleCookie = () => {
+  document.cookie = `${ROLE_COOKIE}=; path=/; max-age=0; samesite=lax`;
+};
+
 type AuthState = {
   user: AuthUser | null;
   accessToken: string | null;
@@ -34,14 +59,14 @@ export const useAuthStore = create<AuthState>((set) => ({
   isHydrating: true,
 
   setAuth: (user, accessToken) => {
-    document.cookie = `session-role=${user.role}; path=/; max-age=${60 * 60 * 24 * 7}; samesite=lax`;
+    writeRoleCookie(user.role);
     set({ user, accessToken, isAuthenticated: true });
   },
 
   setAccessToken: (accessToken) => set({ accessToken }),
 
   clearAuth: () => {
-    document.cookie = "session-role=; path=/; max-age=0";
+    clearRoleCookie();
     set({ user: null, accessToken: null, isAuthenticated: false });
   },
 

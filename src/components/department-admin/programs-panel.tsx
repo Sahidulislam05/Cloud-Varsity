@@ -3,7 +3,7 @@
 
 import { Pencil, Plus } from "lucide-react";
 import { useState } from "react";
-import { type DepartmentRef } from "@/components/department-admin/department-scope";
+import type { DepartmentRef } from "@/components/department-admin/department-scope";
 import { ProgramFormDialog } from "@/components/department-admin/program-form-dialog";
 import { type Column, DataTable } from "@/components/shared/data-table";
 import { Button } from "@/components/ui/button";

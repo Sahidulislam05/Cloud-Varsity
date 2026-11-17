@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { type ApiResponse, apiClient } from "@/lib/api-client";
 import { ROLE_HOME } from "@/lib/roles";
-import { type AuthUser, useAuthStore } from "@/store/auth-store";
+import { type AuthUser, type Role, useAuthStore } from "@/store/auth-store";
 
 type AuthSession = { accessToken: string; user: AuthUser };
 
@@ -20,7 +20,6 @@ export type RegisterInput = {
   batch: number;
   phone?: string;
 };
-
 
 function useCompleteAuth() {
   const router = useRouter();
@@ -37,11 +36,55 @@ export function useLogin() {
 
   return useMutation({
     mutationFn: async (input: LoginInput) => {
-      const res = await apiClient.post<ApiResponse<AuthSession>>("/auth/login", input);
+      const res = await apiClient.post<ApiResponse<AuthSession>>(
+        "/auth/login",
+        input,
+      );
       return res.data.data;
     },
     onSuccess: (session) => {
       toast.success(`Welcome back, ${session.user.name}`);
+      completeAuth(session);
+    },
+  });
+}
+
+export function useGoogleLogin() {
+  const completeAuth = useCompleteAuth();
+
+  return useMutation({
+    // Google Identity Services gives us the user's Google id_token; the
+    // backend verifies it and returns the same session shape as email login.
+    // If the backend endpoint path differs, change it here only.
+    mutationFn: async (idToken: string) => {
+      const res = await apiClient.post<ApiResponse<AuthSession>>(
+        "/auth/google",
+        {
+          idToken,
+        },
+      );
+      return res.data.data;
+    },
+    onSuccess: (session) => {
+      toast.success(`Welcome back, ${session.user.name}`);
+      completeAuth(session);
+    },
+  });
+}
+
+export function useDemoLogin() {
+  const completeAuth = useCompleteAuth();
+
+  return useMutation({
+    mutationFn: async (role: Role) => {
+      const res = await apiClient.post<ApiResponse<AuthSession>>(
+        "/auth/demo-login",
+        { role },
+      );
+      return res.data.data;
+    },
+    onSuccess: (session) => {
+      toast.success(`Welcome, ${session.user.name}`);
       completeAuth(session);
     },
   });
@@ -52,7 +95,10 @@ export function useRegister() {
 
   return useMutation({
     mutationFn: async (input: RegisterInput) => {
-      const res = await apiClient.post<ApiResponse<AuthSession>>("/auth/register", input);
+      const res = await apiClient.post<ApiResponse<AuthSession>>(
+        "/auth/register",
+        input,
+      );
       return res.data.data;
     },
     onSuccess: (session) => {
@@ -69,10 +115,10 @@ export function useLogout() {
 
   return useMutation({
     mutationFn: () => apiClient.post("/auth/logout"),
-    
+
     onSettled: () => {
       clearAuth();
-      queryClient.clear(); 
+      queryClient.clear();
       router.replace("/login");
     },
   });
